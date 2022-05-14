@@ -135,6 +135,7 @@ void UpdateTransition(void)
 
 	case FADE_NONE:	// 何もしてない状態
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}

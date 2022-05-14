@@ -198,6 +198,7 @@ int SetFanWithTex(LPDIRECT3DTEXTURE9 pTexture)
 		return i;
 	}
 
+	MessageBox(NULL, TEXT("å ÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩ"), TEXT("Fan.cpp"), MB_ICONHAND);
 	assert(false);
 	return -1;
 }

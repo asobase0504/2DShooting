@@ -99,6 +99,7 @@ void UpdateMode(void)
 		/* 処理なし */
 		break;
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}
@@ -127,6 +128,7 @@ void DrawMode(void)
 		/* 処理なし */
 		break;
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}
@@ -175,6 +177,7 @@ void SetMode(void)
 		break;
 
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}
@@ -216,6 +219,7 @@ void SetMode(void)
 
 	case MODE_NONE:
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}

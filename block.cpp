@@ -124,6 +124,7 @@ void SetBlock(D3DXVECTOR3 pos, D3DXVECTOR3 size,BLOCKTYPE type)
 			SetColorRectangle(pBlock->nIdx, GetColor(COLOR_WHITE));
 			break;
 		default:
+			MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 			assert(false);
 			break;
 		}
@@ -167,6 +168,7 @@ static void SetBlockTile(D3DXVECTOR3 pos, D3DXVECTOR3 size, BLOCKTYPE type)
 			SetColorRectangle(pBlock->nIdx, GetColor(COLOR_BLACK));
 			break;
 		default:
+			MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 			assert(false);
 			break;
 		}
@@ -200,6 +202,7 @@ void ChangeBlock(int nIdx, BLOCKTYPE type)
 		SetBlockTile(pBlock->pos, pBlock->size, pBlock->type);
 		break;
 	default:
+		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 		assert(false);
 		break;
 	}

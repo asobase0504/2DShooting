@@ -193,6 +193,7 @@ int SetRectangleWithTex(LPDIRECT3DTEXTURE9 pTexture)
 		return i;
 	}
 
+	MessageBox(NULL, TEXT("ãÈå`ÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩ"), TEXT("RectAngle"), MB_ICONHAND);
 	assert(false);
 	return -1;
 }

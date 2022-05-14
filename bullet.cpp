@@ -211,6 +211,7 @@ void CollisionBullet(D3DXVECTOR3& pos, const D3DXVECTOR3& inVec, float posDist)
 						ChangeBlock(cntBlock, BLOCKTYPE::BLOCK);
 						break;
 					default:
+						MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
 						assert(false);
 						break;
 					}

@@ -100,6 +100,7 @@ void LoadMap(void)
 	}
 	else
 	{//ファイルが開かない場合
+		MessageBox(NULL, TEXT("ファイルが開きませんでした"), TEXT("FILE"), MB_ICONHAND);
 		assert(false);
 	}
 	//ファイルを閉じる
