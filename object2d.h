@@ -20,17 +20,19 @@ class CObject2D : public CObject
 {
 public:
 	CObject2D();
-	virtual ~CObject2D();
+	~CObject2D();
 
 	void Init();
 	void Uninit();
-	virtual void Update();
+	void Update();
 	void Draw();
 	bool GetUseStatus();
 	bool GetDrawStatus();
 	void CreateVtxBuff();
+	void SetTexture(LPDIRECT3DTEXTURE9 inTexture);
 	void SetPos(D3DXVECTOR3& inPos);
 	void SetSize(D3DXVECTOR3& inSize);
+	void SetColor(D3DXCOLOR& inColor);
 private:
 
 private:
@@ -39,6 +41,7 @@ private:
 
 	LPDIRECT3DTEXTURE9 m_pTexture;		// テクスチャ
 	LPDIRECT3DVERTEXBUFFER9	m_pVtxBuff;	// 頂点バッファ
+	D3DXCOLOR m_col;
 	bool m_isUse;		// 使用しているか
 	bool m_isDraw;	// 描写するか
 	bool m_hasAdd;	// 加算合成を持っているか

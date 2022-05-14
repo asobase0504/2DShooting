@@ -184,6 +184,14 @@ void CObject2D::CreateVtxBuff()
 }
 
 //-----------------------------------------
+// テクスチャの設定
+//-----------------------------------------
+void CObject2D::SetTexture(LPDIRECT3DTEXTURE9 inTexture)
+{
+	m_pTexture = inTexture;
+}
+
+//-----------------------------------------
 // 位置の設定
 //-----------------------------------------
 void CObject2D::SetPos(D3DXVECTOR3& inPos)
@@ -222,6 +230,28 @@ void CObject2D::SetSize(D3DXVECTOR3& inSize)
 	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_scale.x, m_pos.y - m_scale.y, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_scale.x, m_pos.y + m_scale.y, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_scale.x, m_pos.y + m_scale.y, 0.0f);
+
+	// 頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
+}
+
+//-----------------------------------------
+// 色の設定
+//-----------------------------------------
+void CObject2D::SetColor(D3DXCOLOR& inColor)
+{
+	m_col = inColor;
+
+	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
+
+	// 頂点情報をロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 位置の設定
+	pVtx[0].col = m_col;
+	pVtx[1].col = m_col;
+	pVtx[2].col = m_col;
+	pVtx[3].col = m_col;
 
 	// 頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();
