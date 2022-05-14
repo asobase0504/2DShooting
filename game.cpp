@@ -38,8 +38,10 @@ namespace
 {
 bool		s_bPause = false;		// ポーズ中かどうか [してる  : true してない  : false]
 int			s_nIdxBg;				// 背景の矩形インデックス
-CObject2D*	s_Object[10];			// オブジェクトのインスタンス
-CPlayer* s_pPlayer[2];
+
+// インスタンスの生成
+CObject2D*	s_Object;	// オブジェクト
+CPlayer* s_pPlayer[2];	// プレイヤー
 }// namesapceはここまで
 
 //--------------------------------------------------
@@ -49,32 +51,41 @@ void InitGame(void)
 {
 	s_bPause = false;	// ポーズ解除
 
-	for (int i = 0; i < 10; i++)
-	{// 背景
-		if (s_Object[i] != nullptr)
+	// 背景
+	if (s_Object == nullptr)
+	{
+		s_Object = new CObject2D;
+
+		if (s_Object == nullptr)
 		{
-			continue;
+			MessageBox(NULL, TEXT("動的確保に失敗しました。"), TEXT("動的確保に失敗しました。"), MB_ICONHAND);
+			assert(false);
 		}
 
-		s_Object[i] = new CObject2D;
-
-		s_Object[i]->Init();
-		s_Object[i]->CreateVtxBuff();
-		s_Object[i]->SetTexture(GetTexture(TEXTURE_BG));
-		s_Object[i]->SetPos(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
-		s_Object[i]->SetSize(D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f));
-
-		break;
+		s_Object->Init();
+		s_Object->CreateVtxBuff();
+		s_Object->SetTexture(GetTexture(TEXTURE_BG));
+		s_Object->SetPos(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
+		s_Object->SetSize(D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f));
 	}
 
 	for (int i = 0; i < 2; i++)
-	{// 背景
+	{// プレイヤー
 		if (s_pPlayer[i] != nullptr)
 		{
 			continue;
 		}
 
+		/* ↓ 使用されていない場合 ↓ */
+
 		s_pPlayer[i] = new CPlayer;
+
+		if (s_pPlayer == nullptr)
+		{
+			MessageBox(NULL, TEXT("動的確保に失敗しました。"), TEXT("動的確保に失敗しました。"), MB_ICONHAND);
+			assert(false);
+		}
+
 		s_pPlayer[i]->Init();
 	}
 
@@ -97,17 +108,12 @@ void UninitGame(void)
 	StopSound();
 
 	// オブジェクトの解放
-	for (int i = 0; i < 10; i++)
+	if (s_Object != nullptr)
 	{
-		if (s_Object[i] == nullptr)
-		{
-			continue;
-		}
+		s_Object->Uninit();
 
-		s_Object[i]->Uninit();
-
-		delete s_Object[i];
-		s_Object[i] = nullptr;
+		delete s_Object;
+		s_Object = nullptr;
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -145,19 +151,16 @@ void UpdateGame(void)
 //--------------------------------------------------
 void DrawGame(void)
 {
-	for (int i = 0; i < 10; i++)
-	{// 背景
-		if (s_Object[i] == nullptr)
-		{
-			continue;
-		}
-
-		s_Object[i]->Draw();
+	// 背景の描画
+	if (s_Object != nullptr)
+	{
+		s_Object->Draw();
 	}
 
 	// 矩形の描画
 	DrawRectangle();
 
+	// プレイヤ―の描画
 	s_pPlayer[0]->Draw();
 	s_pPlayer[1]->Draw();
 
