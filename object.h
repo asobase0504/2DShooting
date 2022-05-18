@@ -27,12 +27,14 @@ public:
 	virtual void Draw() = 0;
 
 protected:
-	static const int NAX_OBJECT = 1024;	// オブジェクトの最大数
+	static const int NAX_OBJECT = 2048;	// オブジェクトの最大数
 
 	D3DMATRIX m_mtxWorld;	// ワールドマトリックス
-	D3DXVECTOR3 m_scale;		// 拡縮
+	D3DXVECTOR3 m_scale;	// 拡縮
 	D3DXVECTOR3 m_rot;		// 回転
 	D3DXVECTOR3 m_pos;		// ローカル位置
+	bool m_isUse;			// 使用しているか
+
 	/*そのうち*/
 	//CObject* m_parent;		// 親
 };

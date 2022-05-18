@@ -43,6 +43,7 @@ CPlayer::~CPlayer()
 void CPlayer::Init()
 {
 	CObject2D::Init();
+	ReleaseBullet();
 }
 
 //--------------------------------------------------
@@ -52,6 +53,7 @@ void CPlayer::Init()
 void CPlayer::Uninit()
 {
 	CObject2D::Uninit();
+	ReleaseBullet();
 }
 
 //--------------------------------------------------
@@ -75,7 +77,14 @@ void CPlayer::Update()
 
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
-		SetBullet(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+		for (int i = 0; i < CBullet::GetNumAll(); i++)
+		{
+			if (m_bullet[i].m_isUse)
+			{
+				continue;
+			}
+			m_bullet[i].Set(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+		}
 	}
 }
 
@@ -116,6 +125,10 @@ void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 		assert(false);
 		break;
 	}
+
+	ReleaseBullet();
+	m_bullet = new CBullet[CBullet::GetNumAll()];
+
 }
 
 //--------------------------------------------------
@@ -223,5 +236,23 @@ void CPlayer::Collision()
 				CObject2D::SetPos(m_pos);		// 位置の設定
 			}
 		}
+	}
+}
+
+//--------------------------------------------------
+// 弾インスタンスの解放
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CPlayer::ReleaseBullet()
+{
+	if (m_bullet != nullptr)
+	{
+		for (int i = 0; i < CBullet::GetNumAll(); i++)
+		{
+			m_bullet->Uninit();
+		}
+
+		delete[] m_bullet;
+		m_bullet = nullptr;
 	}
 }

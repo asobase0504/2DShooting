@@ -36,8 +36,8 @@
 //==================================================
 namespace
 {
-bool		s_bPause = false;		// ポーズ中かどうか [してる  : true してない  : false]
-int			s_nIdxBg;				// 背景の矩形インデックス
+bool s_bPause = false;		// ポーズ中かどうか [してる  : true してない  : false]
+int s_nIdxBg;				// 背景の矩形インデックス
 
 // インスタンスの生成
 CObject2D*	s_Object;	// オブジェクト
@@ -62,6 +62,7 @@ void InitGame(void)
 			assert(false);
 		}
 
+		// オブジェクトの生成
 		s_Object->Init();
 		s_Object->CreateVtxBuff();
 		s_Object->SetTexture(GetTexture(TEXTURE_BG));
@@ -89,6 +90,7 @@ void InitGame(void)
 		s_pPlayer[i]->Init();
 	}
 
+	// プレイヤーの生成
 	s_pPlayer[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
 	s_pPlayer[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLOCK);
 
