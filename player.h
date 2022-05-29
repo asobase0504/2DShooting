@@ -13,6 +13,8 @@
 #include "main.h"
 #include "object2d.h"
 
+class CBullet;
+
 class CPlayer : public CObject2D
 {
 public:
@@ -37,18 +39,17 @@ public:
 	void Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type);
 
 private:
-
 	void Move();
 	void Collision();
+	void ReleaseBullet();
 
 private:
 	int m_nIdx;	// î‘çÜ
+	CBullet* m_bullet;
 	PALYERTYPE m_type;
-	D3DXVECTOR3 m_pos;
 	D3DXVECTOR3 m_posOld;
 	D3DXVECTOR3 m_size;
 	D3DXVECTOR3 m_move;
-	bool m_isUse;	// égópÇµÇƒÇÈÇ©î€Ç©
 
 };
 #endif // !_PLAYER_H_

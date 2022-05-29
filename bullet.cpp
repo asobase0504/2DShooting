@@ -20,212 +20,185 @@
 #include <assert.h>
 
 //--------------------------------------------------
-// 定義
+// 静的メンバー変数の宣言
 //--------------------------------------------------
-namespace
-{
-const int MAX_BULLET = 200;
+int CBullet::m_maxNumAll = 50;	// 最大数
 
 //--------------------------------------------------
-// ブロックの構造体
+// コンストラクタ
+// Author : Yuda Kaito
 //--------------------------------------------------
-struct Bullet
+CBullet::CBullet() : 
+	m_type(NONE),
+	m_posOld(D3DXVECTOR3(0.0f,0.0f,0.0f)),
+	m_move(D3DXVECTOR3(0.0f,0.0f,0.0f))
 {
-	int nIdx;	// 番号
-	BULLETTYPE type;
-	D3DXVECTOR3 pos;
-	D3DXVECTOR3 posOld;
-	D3DXVECTOR3 size;
-	D3DXVECTOR3 move;
-	bool bUse;	// 使用してるか否か
-};
 }
 
 //--------------------------------------------------
-// プロトタイプ宣言
+// デストラクタ
+// Author : Yuda Kaito
 //--------------------------------------------------
-void CollisionBullet(D3DXVECTOR3& pos, const D3DXVECTOR3& inVec, float posDist);
-
-//--------------------------------------------------
-// 静的変数
-//--------------------------------------------------
-namespace
+CBullet::~CBullet()
 {
-Bullet s_aBullet[MAX_BULLET];
 }
 
-//==================================================
+//--------------------------------------------------
 // 初期化
-//==================================================
-void InitBullet(void)
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::Init()
 {
-	ZeroMemory(s_aBullet, sizeof(s_aBullet));
+	CObject2D::Init();
 }
 
-//==================================================
+//--------------------------------------------------
 // 終了
-//==================================================
-void UninitBullet(void)
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::Uninit()
 {
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		StopUseRectangle(s_aBullet[i].nIdx);
-	}
+	CObject2D::Uninit();
 }
 
-//==================================================
+//--------------------------------------------------
 // 更新
-//==================================================
-void UpdateBullet(void)
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::Update()
 {
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		Bullet* pBullet = &s_aBullet[i];
-
-		if (!pBullet->bUse)
-		{
-			continue;
-		}
-
-		pBullet->pos += pBullet->move;
-
-		/* ↓使用している↓ */
-
-		CollisionBullet(pBullet->pos, pBullet->move, 1.0f);
-
-		// 再表示
-		SetPosRectangle(pBullet->nIdx, pBullet->pos, pBullet->size);
-	}
-}
-
-//==================================================
-// 描画
-//==================================================
-void DrawBullet(void)
-{
-
-}
-
-//==================================================
-// 設定
-//==================================================
-void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move)
-{
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		Bullet* pBullet = &s_aBullet[i];
-
-		if (pBullet->bUse)
-		{
-			continue;
-		}
-
-		/* ↓使用していない↓ */
-
-		pBullet->bUse = true;
-
-		pBullet->move = move;
-		pBullet->size = D3DXVECTOR3(15.0f,15.0f,0.0f);
-		pBullet->pos = pos;
-		pBullet->type = BULLETTYPE::WHITE;
-
-		// 表示
-		pBullet->nIdx = SetRectangle(TEXTURE_Number_001);
-		SetColorRectangle(pBullet->nIdx, GetColor(COLOR_WHITE));
-		SetPosRectangle(pBullet->nIdx, pBullet->pos, pBullet->size);
-		break;
-	}
-}
-
-//==================================================
-// 当たり判定
-//==================================================
-void CollisionBullet(D3DXVECTOR3& pos, const D3DXVECTOR3& inVec, float posDist)
-{
-	if (posDist == 0.0f)
+	if (!m_isUse)
 	{
 		return;
 	}
 
-	for (int cntBullet = 0; cntBullet < MAX_BULLET; cntBullet++)
+	/* ↓使用している↓ */
+
+	CObject2D::Update();
+
+	// 位置の更新
+	SetPos(m_pos + m_move);
+
+	// ブロックとの衝突判定
+	HitWithBlock(m_pos, m_move);
+}
+
+//--------------------------------------------------
+// 描画
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::Draw()
+{
+	CObject2D::Draw();
+}
+
+//--------------------------------------------------
+// 設定
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::Set(D3DXVECTOR3 & inPos, D3DXVECTOR3 & inMove)
+{
+	SetDrawStatus(true);
+	m_move = inMove;
+	m_type = TYPE::WHITE;
+
+	// 表示
+	CreateVtxBuff();
+	SetPos(inPos);
+	SetSize(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
+	SetColor(GetColor(COLOR_WHITE));;
+	
+}
+
+//--------------------------------------------------
+// 総数の取得
+// Author : Yuda Kaito
+//--------------------------------------------------
+int CBullet::GetNumAll()
+{
+	return m_maxNumAll;
+}
+
+//--------------------------------------------------
+// ブロックとの当たり判定
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
+{
+	if (!GetDrawStatus())
 	{
-		Bullet* pBullet = &s_aBullet[cntBullet];
-		if (!pBullet->bUse)
+		return;
+	}
+
+	D3DXVECTOR3 outpos = {};
+	D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	float outT1;
+	float outT2;
+	float dist;
+
+	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)
+	{
+		CBlock* pBlock = (GetBlock() + cntBlock);
+		
+		if (!pBlock->GetUseStatus() || (int)m_type == (int)pBlock->GetType())
 		{
 			continue;
 		}
 
-		D3DXVECTOR3 outpos = {};
-		D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		float outT1;
-		float outT2;
-		float dist;
-
-		for (int cntBlock = 0; cntBlock < MAX_BLOCK; cntBlock++)
+		if (!((D3DXVec3LengthSq(&(*pBlock->GetScale() + m_scale))) >= D3DXVec3LengthSq(&(*pBlock->GetPos() - m_pos))))
 		{
-			Block* pBlock = (GetBlock() + cntBlock);
+			continue;
+		}
 
-			if (!pBlock->bUse || (int)pBullet->type == (int)pBlock->type)
+		if (m_move.y > 0.0f)
+		{
+			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				continue;
+				vec.y += 1.0f;
+				dist = (m_scale.y * 0.5f) + (m_pos.y - outpos.y);
+				m_pos.y -= dist + dist* 0.0001f;
 			}
-
-			if (!((D3DXVec3LengthSq(&(pBlock->size + pBullet->size))) >= D3DXVec3LengthSq(&(pBlock->pos - pBullet->pos))))
+		}
+		if (m_move.x > 0.0f)
+		{
+			if (RectLeftCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				continue;
+				vec.x += 1.0f;
+				dist = (m_scale.x * 0.5f) + (m_pos.x - outpos.x);
+				m_pos.x -= dist + dist* 0.0001f;
+
 			}
-
-			if (inVec.y > 0.0f)
+		}
+		if (m_move.x < 0.0f)
+		{
+			if (RectRightCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, &outT1, &outT2))
 			{
-				if (RectTopCollision(pBlock->pos, pBlock->size * 0.5f, pBullet->pos, pBullet->size * 0.5f, &outpos, &outT1, &outT2))
+				switch (pBlock->GetType())
 				{
-					vec.y += 1.0f;
-					dist = (pBullet->size.y * 0.5f) + (pBullet->pos.y - outpos.y);
-					pBullet->pos.y -= dist + dist* 0.0001f;
+				case CBlock::TYPE::NONE:
+					SetDrawStatus(false);
+					break;
+				case CBlock::TYPE::BLOCK:
+					pBlock->ChangeType(CBlock::TYPE::WHITE);
+					break;
+				case CBlock::TYPE::WHITE:
+					pBlock->ChangeType(CBlock::TYPE::BLOCK);
+					break;
+				default:
+					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+					assert(false);
+					break;
 				}
 			}
-			if (inVec.x > 0.0f)
+		}
+		if (m_move.y < 0.0f)
+		{
+			if (RectDownCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				if (RectLeftCollision(pBlock->pos, pBlock->size * 0.5f, pBullet->pos, pBullet->size * 0.5f, &outpos, &outT1, &outT2))
-				{
-					vec.x += 1.0f;
-					dist = (pBullet->size.x * 0.5f) + (pBullet->pos.x - outpos.x);
-					pBullet->pos.x -= dist + dist* 0.0001f;
+				vec.y = -1.0f;
+				dist = (-m_scale.y * 0.5f) + (m_pos.y - outpos.y);
 
-				}
-			}
-			if (inVec.x < 0.0f)
-			{
-				if (RectRightCollision(pBlock->pos, pBlock->size * 0.5f, pBullet->pos, pBullet->size * 0.5f, &outpos, &outT1, &outT2))
-				{
-					switch (pBlock->type)
-					{
-					case BLOCKTYPE::NONE:
-						SetDrawRectangle(pBullet->nIdx, false);
-						pBullet->bUse = false;
-						break;
-					case BLOCKTYPE::BLOCK:
-						ChangeBlock(cntBlock, BLOCKTYPE::WHITE);
-						break;
-					case BLOCKTYPE::WHITE:
-						ChangeBlock(cntBlock, BLOCKTYPE::BLOCK);
-						break;
-					default:
-						MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-						assert(false);
-						break;
-					}
-				}
-			}
-			if (inVec.y < 0.0f)
-			{
-				if (RectDownCollision(pBlock->pos, pBlock->size * 0.5f, pBullet->pos, pBullet->size * 0.5f, &outpos, &outT1, &outT2))
-				{
-					vec.y = -1.0f;
-					dist = (-pBullet->size.y * 0.5f) + (pBullet->pos.y - outpos.y);
-
-					pBullet->pos.y -= dist + dist* 0.0001f;
-				}
+				m_pos.y -= dist + dist* 0.0001f;
 			}
 		}
 	}

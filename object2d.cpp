@@ -15,7 +15,6 @@
 CObject2D::CObject2D() :
 	m_pTexture(nullptr),
 	m_pVtxBuff(nullptr),
-	m_isUse(false),
 	m_isDraw(false),
 	m_hasAdd(false)
 {
@@ -62,7 +61,7 @@ void CObject2D::Uninit()
 //-----------------------------------------
 void CObject2D::Update()
 {
-
+//	printf("%d", nData);
 }
 
 //-----------------------------------------
@@ -112,11 +111,11 @@ void CObject2D::Draw()
 }
 
 //-----------------------------------------
-// g—pó‹µ‚ğæ“¾
+// •`‰æó‹µ‚ğİ’è
 //-----------------------------------------
-bool CObject2D::GetUseStatus()
+void CObject2D::SetDrawStatus(bool ChageState)
 {
-	return m_isUse;
+	m_isDraw = ChageState;
 }
 
 //-----------------------------------------
