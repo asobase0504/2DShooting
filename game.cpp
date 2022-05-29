@@ -94,11 +94,9 @@ void InitGame(void)
 	s_pPlayer[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
 	s_pPlayer[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLOCK);
 
-	InitBlock();
+	InitMap();
 	LoadMap();
 	SetMap();
-
-	InitBullet();
 }
 
 //--------------------------------------------------
@@ -133,8 +131,7 @@ void UninitGame(void)
 
 	StopUseRectangle(s_nIdxBg);	// Žg‚¤‚Ì‚ðŽ~‚ß‚é
 
-	UninitBlock();
-	UninitBullet();
+	UninitMap();
 }
 
 //--------------------------------------------------
@@ -144,8 +141,7 @@ void UpdateGame(void)
 {
 	s_pPlayer[0]->Update();
 	s_pPlayer[1]->Update();
-	UpdateBlock();
-	UpdateBullet();
+	UpdateMap();
 }
 
 //--------------------------------------------------
@@ -158,6 +154,8 @@ void DrawGame(void)
 	{
 		s_Object->Draw();
 	}
+
+	DrawMap();
 
 	// ‹éŒ`‚Ì•`‰æ
 	DrawRectangle();

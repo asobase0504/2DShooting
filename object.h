@@ -26,6 +26,9 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
+	bool GetUseStatus();
+	D3DXVECTOR3* GetPos() { return &m_pos; }
+	D3DXVECTOR3* GetScale() { return &m_scale; }
 protected:
 	static const int NAX_OBJECT = 2048;	// オブジェクトの最大数
 

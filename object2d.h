@@ -31,7 +31,7 @@ public:
 	void Uninit() override;
 	void Update() override;
 	void Draw() override;
-	bool GetUseStatus();
+	void SetDrawStatus(bool ChageState);
 	bool GetDrawStatus();
 	void CreateVtxBuff();
 	void SetTexture(LPDIRECT3DTEXTURE9 inTexture);

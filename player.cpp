@@ -13,9 +13,11 @@
 #include "color.h"
 #include "input.h"
 #include "collision.h"
-#include "block.h"
 #include "map.h"
+#include "block.h"
 #include "bullet.h"
+#include "object.h"
+#include "object2D.h"
 
 // デバッグ
 #include <assert.h>
@@ -24,7 +26,13 @@
 // コンストラクタ
 // Author : Yuda Kaito
 //--------------------------------------------------
-CPlayer::CPlayer()
+CPlayer::CPlayer() : 
+	m_nIdx(0),
+	m_bullet(nullptr),
+	m_type(NONE),
+	m_posOld(D3DXVECTOR3(0.0f,0.0f,0.0f)),
+	m_size(D3DXVECTOR3(0.0f, 0.0f, 0.0f)),
+	m_move(D3DXVECTOR3(0.0f, 0.0f, 0.0f))
 {
 }
 
@@ -79,13 +87,27 @@ void CPlayer::Update()
 	{
 		for (int i = 0; i < CBullet::GetNumAll(); i++)
 		{
-			if (m_bullet[i].m_isUse)
+			if (m_bullet[i].GetDrawStatus())
 			{
 				continue;
 			}
+
 			m_bullet[i].Set(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+
+			break;
 		}
 	}
+
+	for (int i = 0; i < CBullet::GetNumAll(); i++)
+	{
+		if (!m_bullet[i].GetDrawStatus())
+		{
+			continue;
+		}
+
+		m_bullet[i].Update();
+	}
+
 }
 
 //--------------------------------------------------
@@ -95,6 +117,16 @@ void CPlayer::Update()
 void CPlayer::Draw()
 {
 	CObject2D::Draw();
+
+	for (int i = 0; i < CBullet::GetNumAll(); i++)
+	{
+		if (!m_bullet[i].GetDrawStatus())
+		{
+			continue;
+		}
+
+		m_bullet[i].Draw();
+	}
 }
 
 //--------------------------------------------------
@@ -187,17 +219,17 @@ void CPlayer::Collision()
 	D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	float dist;
 
-	for (int cntBlock = 0; cntBlock < MAX_BLOCK; cntBlock++)
+	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)
 	{
-		Block* pBlock = (GetBlock() + cntBlock);
-		if (!pBlock->bUse || (int)m_type == (int)pBlock->type)
+		CBlock* pBlock = &GetBlock()[cntBlock];
+		if (!pBlock->GetUseStatus() || (int)m_type == (int)pBlock->GetType())
 		{
 			continue;
 		}
 
 		if (m_move.y > 0.0f)
 		{
-			if (RectTopCollision(pBlock->pos, pBlock->size * 0.5f, m_pos, m_scale, &outpos, NULL, NULL))
+			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.y += 1.0f;
 				dist = (m_scale.y) + (m_pos.y - outpos.y);
@@ -207,7 +239,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.x > 0.0f)
 		{
-			if (RectLeftCollision(pBlock->pos, pBlock->size * 0.5f, m_pos, m_scale, &outpos, NULL, NULL))
+			if (RectLeftCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.x += 1.0f;
 				dist = (m_scale.x) + (m_pos.x - outpos.x);
@@ -217,7 +249,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.x < 0.0f)
 		{
-			if (RectRightCollision(pBlock->pos, pBlock->size * 0.5f, m_pos, m_scale, &outpos, NULL, NULL))
+			if (RectRightCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.x += -1.0f;
 				float dist = (-m_scale.x) + (m_pos.x - outpos.x);
@@ -227,7 +259,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.y < 0.0f)
 		{
-			if (RectDownCollision(pBlock->pos, pBlock->size * 0.5f, m_pos, m_scale, &outpos, NULL, NULL))
+			if (RectDownCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.y = -1.0f;
 				dist = (-m_scale.y) + (m_pos.y - outpos.y);
@@ -245,14 +277,21 @@ void CPlayer::Collision()
 //--------------------------------------------------
 void CPlayer::ReleaseBullet()
 {
-	if (m_bullet != nullptr)
+	if (m_bullet == nullptr)
 	{
-		for (int i = 0; i < CBullet::GetNumAll(); i++)
+		return;
+	}
+
+	for (int i = 0; i < CBullet::GetNumAll(); i++)
+	{
+		if (m_bullet == nullptr)
 		{
-			m_bullet->Uninit();
+			continue;
 		}
 
-		delete[] m_bullet;
-		m_bullet = nullptr;
+		m_bullet[i].Uninit();
 	}
+
+	delete[] m_bullet;
+	m_bullet = nullptr;
 }

@@ -22,7 +22,7 @@
 //--------------------------------------------------
 // 静的メンバー変数の宣言
 //--------------------------------------------------
-static int m_maxNumAll = 5;	// 最大数
+int CBullet::m_maxNumAll = 50;	// 最大数
 
 //--------------------------------------------------
 // コンストラクタ
@@ -80,7 +80,7 @@ void CBullet::Update()
 	SetPos(m_pos + m_move);
 
 	// ブロックとの衝突判定
-	//HitWithBlock(m_pos, m_move);
+	HitWithBlock(m_pos, m_move);
 }
 
 //--------------------------------------------------
@@ -98,14 +98,14 @@ void CBullet::Draw()
 //--------------------------------------------------
 void CBullet::Set(D3DXVECTOR3 & inPos, D3DXVECTOR3 & inMove)
 {
-	m_isUse = true;
+	SetDrawStatus(true);
 	m_move = inMove;
 	m_type = TYPE::WHITE;
 
 	// 表示
 	CreateVtxBuff();
 	SetPos(inPos);
-	SetSize(D3DXVECTOR3(15.0f, 15.0f, 0.0f));
+	SetSize(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
 	SetColor(GetColor(COLOR_WHITE));;
 	
 }
@@ -125,4 +125,81 @@ int CBullet::GetNumAll()
 //--------------------------------------------------
 void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 {
+	if (!GetDrawStatus())
+	{
+		return;
+	}
+
+	D3DXVECTOR3 outpos = {};
+	D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	float outT1;
+	float outT2;
+	float dist;
+
+	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)
+	{
+		CBlock* pBlock = (GetBlock() + cntBlock);
+		
+		if (!pBlock->GetUseStatus() || (int)m_type == (int)pBlock->GetType())
+		{
+			continue;
+		}
+
+		if (!((D3DXVec3LengthSq(&(*pBlock->GetScale() + m_scale))) >= D3DXVec3LengthSq(&(*pBlock->GetPos() - m_pos))))
+		{
+			continue;
+		}
+
+		if (m_move.y > 0.0f)
+		{
+			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
+			{
+				vec.y += 1.0f;
+				dist = (m_scale.y * 0.5f) + (m_pos.y - outpos.y);
+				m_pos.y -= dist + dist* 0.0001f;
+			}
+		}
+		if (m_move.x > 0.0f)
+		{
+			if (RectLeftCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
+			{
+				vec.x += 1.0f;
+				dist = (m_scale.x * 0.5f) + (m_pos.x - outpos.x);
+				m_pos.x -= dist + dist* 0.0001f;
+
+			}
+		}
+		if (m_move.x < 0.0f)
+		{
+			if (RectRightCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, &outT1, &outT2))
+			{
+				switch (pBlock->GetType())
+				{
+				case CBlock::TYPE::NONE:
+					SetDrawStatus(false);
+					break;
+				case CBlock::TYPE::BLOCK:
+					pBlock->ChangeType(CBlock::TYPE::WHITE);
+					break;
+				case CBlock::TYPE::WHITE:
+					pBlock->ChangeType(CBlock::TYPE::BLOCK);
+					break;
+				default:
+					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+					assert(false);
+					break;
+				}
+			}
+		}
+		if (m_move.y < 0.0f)
+		{
+			if (RectDownCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
+			{
+				vec.y = -1.0f;
+				dist = (-m_scale.y * 0.5f) + (m_pos.y - outpos.y);
+
+				m_pos.y -= dist + dist* 0.0001f;
+			}
+		}
+	}
 }
