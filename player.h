@@ -40,6 +40,7 @@ public:
 
 private:
 	void Move();
+	void Shot();
 	void Collision();
 	void ReleaseBullet();
 

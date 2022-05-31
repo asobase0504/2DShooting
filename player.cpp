@@ -18,6 +18,7 @@
 #include "bullet.h"
 #include "object.h"
 #include "object2D.h"
+#include <vector>
 
 // デバッグ
 #include <assert.h>
@@ -83,21 +84,6 @@ void CPlayer::Update()
 	Move();
 	Collision();
 
-	if (GetKeyboardTrigger(DIK_RETURN))
-	{
-		for (int i = 0; i < CBullet::GetNumAll(); i++)
-		{
-			if (m_bullet[i].GetDrawStatus())
-			{
-				continue;
-			}
-
-			m_bullet[i].Set(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
-
-			break;
-		}
-	}
-
 	for (int i = 0; i < CBullet::GetNumAll(); i++)
 	{
 		if (!m_bullet[i].GetDrawStatus())
@@ -141,9 +127,10 @@ void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 	m_type = type;
 
 	CObject2D::CreateVtxBuff();		// 頂点バッファの生成
-	CObject2D::SetTexture(GetTexture(TEXTURE_Number_001));
+	CObject2D::SetTexture(GetTexture(TEXTURE_Number_001));	// テクスチャの設定
 	CObject2D::SetPos(m_pos);		// 位置の設定
 	CObject2D::SetSize(m_scale);	// 大きさの設定
+
 	switch (type)
 	{
 	case PALYERTYPE::WHITE:
@@ -210,6 +197,28 @@ void CPlayer::Move()
 }
 
 //--------------------------------------------------
+// 弾の発射
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CPlayer::Shot()
+{
+	if (GetKeyboardTrigger(DIK_RETURN))
+	{
+		for (int i = 0; i < CBullet::GetNumAll(); i++)
+		{
+			if (m_bullet[i].GetDrawStatus())
+			{
+				continue;
+			}
+
+			m_bullet[i].Set(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+
+			break;
+		}
+	}
+}
+
+//--------------------------------------------------
 // 当たり判定
 // Author : Yuda Kaito
 //--------------------------------------------------
@@ -222,6 +231,7 @@ void CPlayer::Collision()
 	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)
 	{
 		CBlock* pBlock = &GetBlock()[cntBlock];
+
 		if (!pBlock->GetUseStatus() || (int)m_type == (int)pBlock->GetType())
 		{
 			continue;
@@ -229,6 +239,7 @@ void CPlayer::Collision()
 
 		if (m_move.y > 0.0f)
 		{
+			// プレイヤー上、ブロック下の当たり判定
 			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.y += 1.0f;
@@ -289,9 +300,11 @@ void CPlayer::ReleaseBullet()
 			continue;
 		}
 
+		// 終了処理
 		m_bullet[i].Uninit();
 	}
 
+	// 破棄
 	delete[] m_bullet;
 	m_bullet = nullptr;
 }
