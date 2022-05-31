@@ -123,10 +123,9 @@ void CPlayer::Draw()
 //--------------------------------------------------
 void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 {
-	m_isUse = true;
-	m_pos = pos;
-	m_scale = size;
-	m_type = type;
+	m_pos = pos;	// 位置
+	m_scale = size;	// 大きさ
+	m_type = type;	// 種別
 
 	CObject2D::CreateVtxBuff();		// 頂点バッファの生成
 	CObject2D::SetTexture(GetTexture(TEXTURE_Number_001));	// テクスチャの設定
@@ -150,6 +149,10 @@ void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 	ReleaseBullet();
 	m_bullet = new CBullet[CBullet::GetNumAll()];
 
+	for (int i = 0; i < CBullet::GetNumAll(); i++)
+	{
+		m_bullet[i].Init();
+	}
 }
 
 //--------------------------------------------------

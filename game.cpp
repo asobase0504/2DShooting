@@ -140,10 +140,11 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	s_pPlayer[0]->Update();
+	s_pPlayer[1]->Update();
 
 	for (int i = 0; i < CBullet::MAX_BULLET; i++)
 	{
-		if (s_pPlayer[0]->GetBullet() == nullptr)
+		if (s_pPlayer[0]->GetBullet() == nullptr || !s_pPlayer[0]->GetBullet()[i].GetDrawStatus())
 		{
 			continue;
 		}
@@ -151,7 +152,6 @@ void UpdateGame(void)
 		s_pPlayer[0]->GetBullet()[i].HitWithBullet(s_pPlayer[1]->GetBullet());
 	}
 
-	s_pPlayer[1]->Update();
 	UpdateMap();
 }
 

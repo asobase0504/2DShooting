@@ -273,7 +273,7 @@ void CBullet::HitWithBullet(CBullet* inBullet)
 
 	for (int i = 0; i < CBullet::MAX_BULLET; i++)
 	{
-		if (!inBullet[i].GetUseStatus() || !inBullet[i].GetDrawStatus() || m_type == inBullet[i].GetType())
+		if (!inBullet[i].GetUseStatus() || !inBullet[i].GetDrawStatus() || !GetDrawStatus() || m_type == inBullet[i].GetType())
 		{
 			continue;
 		}
@@ -281,7 +281,7 @@ void CBullet::HitWithBullet(CBullet* inBullet)
 		float Length = D3DXVec3LengthSq(&(*inBullet[i].GetScale() + m_scale));
 		float Dist = D3DXVec3LengthSq(&(*inBullet[i].GetPos() - m_pos));
 
-		if (Length == Dist)
+		if (Length - Dist == 0.0f)
 		{
 			SetDrawStatus(false);
 			inBullet[i].SetDrawStatus(false);
