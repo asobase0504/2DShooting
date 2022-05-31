@@ -100,7 +100,7 @@ void CBlock::Create(D3DXVECTOR3 pos, D3DXVECTOR3 size, TYPE type)
 	case TYPE::NONE:
 		SetDrawStatus(false);
 		break;
-	case TYPE::BLOCK:
+	case TYPE::BLACK:
 		SetColor(GetColor(COLOR_BLACK));
 		break;
 	case TYPE::WHITE:
@@ -122,13 +122,13 @@ void CBlock::ChangeType(TYPE type)
 	{
 	case TYPE::NONE:
 		break;
-	case TYPE::BLOCK:
+	case TYPE::BLACK:
 		m_type = TYPE::WHITE;
 		SetColor(GetColor(COLOR_WHITE));
 
 		break;
 	case TYPE::WHITE:
-		m_type = TYPE::BLOCK;
+		m_type = TYPE::BLACK;
 		SetColor(GetColor(COLOR_BLACK));
 
 		break;

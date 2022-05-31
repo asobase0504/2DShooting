@@ -34,6 +34,7 @@ public:
 	void SetDrawStatus(bool ChageState);
 	bool GetDrawStatus();
 	void CreateVtxBuff();
+	void Delete();
 	void SetTexture(LPDIRECT3DTEXTURE9 inTexture);
 	void SetPos(D3DXVECTOR3& inPos);
 	void SetSize(D3DXVECTOR3& inSize);

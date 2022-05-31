@@ -92,7 +92,7 @@ void InitGame(void)
 
 	// ƒvƒŒƒCƒ„[‚Ì¶¬
 	s_pPlayer[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
-	s_pPlayer[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLOCK);
+	s_pPlayer[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLACK);
 
 	InitMap();
 	LoadMap();
@@ -140,6 +140,17 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	s_pPlayer[0]->Update();
+
+	for (int i = 0; i < CBullet::MAX_BULLET; i++)
+	{
+		if (s_pPlayer[0]->GetBullet() == nullptr)
+		{
+			continue;
+		}
+
+		s_pPlayer[0]->GetBullet()[i].HitWithBullet(s_pPlayer[1]->GetBullet());
+	}
+
 	s_pPlayer[1]->Update();
 	UpdateMap();
 }

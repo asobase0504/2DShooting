@@ -13,6 +13,7 @@
 // コンストラクタ
 //-----------------------------------------
 CObject2D::CObject2D() :
+	CObject(),
 	m_pTexture(nullptr),
 	m_pVtxBuff(nullptr),
 	m_isDraw(false),
@@ -131,6 +132,11 @@ bool CObject2D::GetDrawStatus()
 //-----------------------------------------
 void CObject2D::CreateVtxBuff()
 {
+	if (m_isUse)
+	{
+		return;
+	}
+
 	// 頂点バッファの生成
 	GetDevice()->CreateVertexBuffer(
 		sizeof(VERTEX_2D) * NUM_VERTEX,
@@ -183,6 +189,16 @@ void CObject2D::CreateVtxBuff()
 }
 
 //-----------------------------------------
+// 破棄
+//-----------------------------------------
+void CObject2D::Delete()
+{
+	m_isUse = false;
+	m_isDraw = false;
+	Uninit();
+}
+
+//-----------------------------------------
 // テクスチャの設定
 //-----------------------------------------
 void CObject2D::SetTexture(LPDIRECT3DTEXTURE9 inTexture)
@@ -195,6 +211,11 @@ void CObject2D::SetTexture(LPDIRECT3DTEXTURE9 inTexture)
 //-----------------------------------------
 void CObject2D::SetPos(D3DXVECTOR3& inPos)
 {
+	if (!m_isUse)
+	{
+		return;
+	}
+
 	m_pos = inPos;
 
 	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
@@ -217,6 +238,11 @@ void CObject2D::SetPos(D3DXVECTOR3& inPos)
 //-----------------------------------------
 void CObject2D::SetSize(D3DXVECTOR3& inSize)
 {
+	if (!m_isUse)
+	{
+		return;
+	}
+
 	m_scale = inSize;
 
 	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ
@@ -239,6 +265,11 @@ void CObject2D::SetSize(D3DXVECTOR3& inSize)
 //-----------------------------------------
 void CObject2D::SetColor(D3DXCOLOR& inColor)
 {
+	if (!m_isUse)
+	{
+		return;
+	}
+
 	m_col = inColor;
 
 	VERTEX_2D *pVtx = NULL;		// 頂点情報へのポインタ

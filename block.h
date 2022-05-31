@@ -25,7 +25,7 @@ public:
 	enum class TYPE
 	{
 		NONE = 0,
-		BLOCK,
+		BLACK,
 		WHITE,
 		MAX
 	};

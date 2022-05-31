@@ -28,6 +28,7 @@
 // Author : Yuda Kaito
 //--------------------------------------------------
 CPlayer::CPlayer() : 
+	CObject2D(),
 	m_nIdx(0),
 	m_bullet(nullptr),
 	m_type(NONE),
@@ -81,8 +82,9 @@ void CPlayer::Update()
 	CObject2D::Update();
 
 	m_posOld = m_pos;
-	Move();
-	Collision();
+	Move();	// 移動
+	Shot();	// 弾の発射
+	Collision();	// ブロックとの当たり判定
 
 	for (int i = 0; i < CBullet::GetNumAll(); i++)
 	{
@@ -136,7 +138,7 @@ void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 	case PALYERTYPE::WHITE:
 		CObject2D::SetColor(D3DXCOLOR(1.0f,1.0f,1.0f,1.0f));
 		break;
-	case PALYERTYPE::BLOCK:
+	case PALYERTYPE::BLACK:
 		CObject2D::SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 		break;
 	default:
@@ -202,19 +204,40 @@ void CPlayer::Move()
 //--------------------------------------------------
 void CPlayer::Shot()
 {
-	if (GetKeyboardTrigger(DIK_RETURN))
+	D3DXVECTOR3 vec(0.0f,0.0f,0.0f);
+
+	if (GetKeyboardTrigger(DIK_UP))
 	{
-		for (int i = 0; i < CBullet::GetNumAll(); i++)
+		vec.y = -5.0f;
+	}
+	else if (GetKeyboardTrigger(DIK_DOWN))
+	{
+		vec.y = 5.0f;
+	}
+	else if (GetKeyboardTrigger(DIK_LEFT))
+	{
+		vec.x = -5.0f;
+	}
+	else if (GetKeyboardTrigger(DIK_RIGHT))
+	{
+		vec.x = 5.0f;
+	}
+
+	if (D3DXVec3LengthSq(&vec) == 0.0f)
+	{
+		return;
+	}
+
+	for (int i = 0; i < CBullet::GetNumAll(); i++)
+	{
+		if (m_bullet[i].GetDrawStatus())
 		{
-			if (m_bullet[i].GetDrawStatus())
-			{
-				continue;
-			}
-
-			m_bullet[i].Set(m_pos, D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
-
-			break;
+			continue;
 		}
+
+		m_bullet[i].Set(m_posInblock, vec,(CBullet::TYPE)m_type);
+
+		break;
 	}
 }
 
@@ -232,15 +255,24 @@ void CPlayer::Collision()
 	{
 		CBlock* pBlock = &GetBlock()[cntBlock];
 
-		if (!pBlock->GetUseStatus() || (int)m_type == (int)pBlock->GetType())
+		if (!pBlock->GetUseStatus())
 		{
 			continue;
 		}
 
+		if (Collision::PointAndRectangle(m_pos, *pBlock->GetPos(), *pBlock->GetScale()))
+		{
+			m_posInblock = *pBlock->GetPos();
+		}
+
+		if ((int)m_type == (int)pBlock->GetType())
+		{
+			continue;
+		}
 		if (m_move.y > 0.0f)
 		{
 			// プレイヤー上、ブロック下の当たり判定
-			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
+			if (Collision::RectangleTop(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.y += 1.0f;
 				dist = (m_scale.y) + (m_pos.y - outpos.y);
@@ -250,7 +282,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.x > 0.0f)
 		{
-			if (RectLeftCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
+			if (Collision::RectangleLeft(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.x += 1.0f;
 				dist = (m_scale.x) + (m_pos.x - outpos.x);
@@ -260,7 +292,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.x < 0.0f)
 		{
-			if (RectRightCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
+			if (Collision::RectangleRight(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.x += -1.0f;
 				float dist = (-m_scale.x) + (m_pos.x - outpos.x);
@@ -270,7 +302,7 @@ void CPlayer::Collision()
 		}
 		if (m_move.y < 0.0f)
 		{
-			if (RectDownCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
+			if (Collision::RectangleDown(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, NULL, NULL))
 			{
 				vec.y = -1.0f;
 				dist = (-m_scale.y) + (m_pos.y - outpos.y);
