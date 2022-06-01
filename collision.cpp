@@ -2,9 +2,11 @@
 #include "collision.h"
 #include "utility.h"
 
-bool SegmentCollision(const D3DXVECTOR3& start1, const D3DXVECTOR3& vec1, const D3DXVECTOR3& start2, const D3DXVECTOR3& vec2, D3DXVECTOR3* OutPos, float* t1, float* t2);
+namespace Collision
+{
+bool Segment(const D3DXVECTOR3& start1, const D3DXVECTOR3& vec1, const D3DXVECTOR3& start2, const D3DXVECTOR3& vec2, D3DXVECTOR3* OutPos, float* t1, float* t2);
 
-bool RectTopCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
+bool RectangleTop(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
 {
 	D3DXVECTOR3 start1 = pos1;
 	start1.x += -size1.x;
@@ -23,7 +25,7 @@ bool RectTopCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -38,7 +40,7 @@ bool RectTopCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -48,7 +50,7 @@ bool RectTopCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D
 	return false;
 }
 
-bool RectDownCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
+bool RectangleDown(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
 {
 	D3DXVECTOR3 start1 = pos1;
 	start1.x += -size1.x;
@@ -67,7 +69,7 @@ bool RectDownCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -82,7 +84,7 @@ bool RectDownCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -92,7 +94,7 @@ bool RectDownCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 	return false;
 }
 
-bool RectLeftCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
+bool RectangleLeft(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
 {
 	D3DXVECTOR3 start1 = pos1;
 	start1.x += -size1.x;
@@ -111,7 +113,7 @@ bool RectLeftCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -126,7 +128,7 @@ bool RectLeftCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 		vec2.y += -size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -135,7 +137,7 @@ bool RectLeftCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const 
 	return false;
 }
 
-bool RectRightCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
+bool RectangleRight(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const D3DXVECTOR3& pos2, const D3DXVECTOR3& size2, D3DXVECTOR3* outPos, float* t1, float* t2)
 {
 	D3DXVECTOR3 start1 = pos1;
 	start1.x += size1.x;
@@ -154,7 +156,7 @@ bool RectRightCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const
 		vec2.y += size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -169,7 +171,7 @@ bool RectRightCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const
 		vec2.y += -size2.y;
 		vec2 -= start2;
 
-		if (SegmentCollision(start1, vec1, start2, vec2, outPos, t1, t2))
+		if (Segment(start1, vec1, start2, vec2, outPos, t1, t2))
 		{
 			return true;
 		}
@@ -178,7 +180,29 @@ bool RectRightCollision(const D3DXVECTOR3& pos1, const D3DXVECTOR3& size1, const
 	return false;
 }
 
-bool SegmentCollision(const D3DXVECTOR3& start1, const D3DXVECTOR3& vec1, const D3DXVECTOR3& start2, const D3DXVECTOR3& vec2, D3DXVECTOR3* outPos, float* t1, float* t2)
+bool PointAndRectangle(const D3DXVECTOR3 & pointPos, const D3DXVECTOR3 & rectanglePos, const D3DXVECTOR3 & rectangleSize)
+{
+	if (rectanglePos.x - rectangleSize.x > pointPos.x)
+	{
+		return false;
+	}
+	if (rectanglePos.x + rectangleSize.x < pointPos.x)
+	{
+		return false;
+	}
+	if (rectanglePos.y - rectangleSize.y > pointPos.y)
+	{
+		return false;
+	}
+	if (rectanglePos.y + rectangleSize.y < pointPos.y)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Segment(const D3DXVECTOR3& start1, const D3DXVECTOR3& vec1, const D3DXVECTOR3& start2, const D3DXVECTOR3& vec2, D3DXVECTOR3* outPos, float* t1, float* t2)
 {
 	// ベクトルの始点同士の距離。
 	D3DXVECTOR3 v = start2 - start1;
@@ -218,4 +242,5 @@ bool SegmentCollision(const D3DXVECTOR3& start1, const D3DXVECTOR3& vec1, const 
 	}
 	return true;
 
+}
 }

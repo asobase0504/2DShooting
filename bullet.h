@@ -22,8 +22,8 @@ public:
 	enum TYPE
 	{
 		NONE = 0,
+		BLACK,
 		WHITE,
-		BLOCK,
 		MAX
 	};
 
@@ -38,11 +38,14 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
-	void Set(D3DXVECTOR3& inPos, D3DXVECTOR3& inMove);
+	void Set(D3DXVECTOR3& inPos, const D3DXVECTOR3& inMove , TYPE inType);
+	void HitWithBullet(CBullet* inBullet);
 
 	static int GetNumAll();
+	TYPE GetType() { return m_type; }
 private:
 	void HitWithBlock(D3DXVECTOR3& inPos, const D3DXVECTOR3& inVec);
+	void LoopPos();
 
 private:
 	static int m_maxNumAll;	// �ő吔

@@ -25,7 +25,7 @@ public:
 	{
 		NONE = 0,
 		WHITE,
-		BLOCK,
+		BLACK,
 		MAX
 	};
 public:
@@ -37,9 +37,11 @@ public:
 	void Update();
 	void Draw();
 	void Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type);
+	CBullet* GetBullet() { return m_bullet; }
 
 private:
 	void Move();
+	void Shot();
 	void Collision();
 	void ReleaseBullet();
 
@@ -47,7 +49,8 @@ private:
 	int m_nIdx;	// 番号
 	CBullet* m_bullet;
 	PALYERTYPE m_type;
-	D3DXVECTOR3 m_posOld;
+	D3DXVECTOR3 m_posOld;	// 前回位置
+	D3DXVECTOR3 m_posInblock;	// 自分が乗っているブロックの位置
 	D3DXVECTOR3 m_size;
 	D3DXVECTOR3 m_move;
 

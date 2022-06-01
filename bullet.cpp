@@ -1,6 +1,6 @@
 //==================================================
 //
-// 正方形のポリゴンの生成
+// 弾の生成
 // Author : Yuda Kaito
 //
 //==================================================
@@ -29,6 +29,7 @@ int CBullet::m_maxNumAll = 50;	// 最大数
 // Author : Yuda Kaito
 //--------------------------------------------------
 CBullet::CBullet() : 
+	CObject2D(),
 	m_type(NONE),
 	m_posOld(D3DXVECTOR3(0.0f,0.0f,0.0f)),
 	m_move(D3DXVECTOR3(0.0f,0.0f,0.0f))
@@ -81,6 +82,9 @@ void CBullet::Update()
 
 	// ブロックとの衝突判定
 	HitWithBlock(m_pos, m_move);
+
+	// 画面街処理
+	LoopPos();
 }
 
 //--------------------------------------------------
@@ -96,18 +100,28 @@ void CBullet::Draw()
 // 設定
 // Author : Yuda Kaito
 //--------------------------------------------------
-void CBullet::Set(D3DXVECTOR3 & inPos, D3DXVECTOR3 & inMove)
+void CBullet::Set(D3DXVECTOR3& inPos, const D3DXVECTOR3& inMove, TYPE inType)
 {
 	SetDrawStatus(true);
 	m_move = inMove;
-	m_type = TYPE::WHITE;
+	m_type = inType;
 
 	// 表示
 	CreateVtxBuff();
 	SetPos(inPos);
 	SetSize(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
-	SetColor(GetColor(COLOR_WHITE));;
-	
+
+	switch (m_type)
+	{
+	case CBullet::BLACK:
+		SetColor(GetColor(COLOR_WHITE));;
+		break;
+	case CBullet::WHITE:
+		SetColor(GetColor(COLOR_BLACK));;
+		break;
+	default:
+		break;
+	}	
 }
 
 //--------------------------------------------------
@@ -152,37 +166,62 @@ void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 
 		if (m_move.y > 0.0f)
 		{
-			if (RectTopCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
-			{
-				vec.y += 1.0f;
-				dist = (m_scale.y * 0.5f) + (m_pos.y - outpos.y);
-				m_pos.y -= dist + dist* 0.0001f;
-			}
-		}
-		if (m_move.x > 0.0f)
-		{
-			if (RectLeftCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
-			{
-				vec.x += 1.0f;
-				dist = (m_scale.x * 0.5f) + (m_pos.x - outpos.x);
-				m_pos.x -= dist + dist* 0.0001f;
-
-			}
-		}
-		if (m_move.x < 0.0f)
-		{
-			if (RectRightCollision(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, &outT1, &outT2))
+			if (Collision::RectangleTop(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
 				switch (pBlock->GetType())
 				{
 				case CBlock::TYPE::NONE:
 					SetDrawStatus(false);
 					break;
-				case CBlock::TYPE::BLOCK:
+				case CBlock::TYPE::BLACK:
 					pBlock->ChangeType(CBlock::TYPE::WHITE);
 					break;
 				case CBlock::TYPE::WHITE:
-					pBlock->ChangeType(CBlock::TYPE::BLOCK);
+					pBlock->ChangeType(CBlock::TYPE::BLACK);
+					break;
+				default:
+					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+					assert(false);
+					break;
+				}
+			}
+		}
+		if (m_move.x > 0.0f)
+		{
+			if (Collision::RectangleLeft(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
+			{
+				switch (pBlock->GetType())
+				{
+				case CBlock::TYPE::NONE:
+					SetDrawStatus(false);
+					break;
+				case CBlock::TYPE::BLACK:
+					pBlock->ChangeType(CBlock::TYPE::WHITE);
+					break;
+				case CBlock::TYPE::WHITE:
+					pBlock->ChangeType(CBlock::TYPE::BLACK);
+					break;
+				default:
+					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+					assert(false);
+					break;
+				}
+			}
+		}
+		if (m_move.x < 0.0f)
+		{
+			if (Collision::RectangleRight(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, &outT1, &outT2))
+			{
+				switch (pBlock->GetType())
+				{
+				case CBlock::TYPE::NONE:
+					SetDrawStatus(false);
+					break;
+				case CBlock::TYPE::BLACK:
+					pBlock->ChangeType(CBlock::TYPE::WHITE);
+					break;
+				case CBlock::TYPE::WHITE:
+					pBlock->ChangeType(CBlock::TYPE::BLACK);
 					break;
 				default:
 					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
@@ -193,13 +232,83 @@ void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 		}
 		if (m_move.y < 0.0f)
 		{
-			if (RectDownCollision(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
+			if (Collision::RectangleDown(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				vec.y = -1.0f;
-				dist = (-m_scale.y * 0.5f) + (m_pos.y - outpos.y);
-
-				m_pos.y -= dist + dist* 0.0001f;
+				switch (pBlock->GetType())
+				{
+				case CBlock::TYPE::NONE:
+					SetDrawStatus(false);
+					break;
+				case CBlock::TYPE::BLACK:
+					pBlock->ChangeType(CBlock::TYPE::WHITE);
+					break;
+				case CBlock::TYPE::WHITE:
+					pBlock->ChangeType(CBlock::TYPE::BLACK);
+					break;
+				default:
+					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+					assert(false);
+					break;
+				}
 			}
 		}
+	}
+}
+
+//--------------------------------------------------
+// 弾同士の当たり判定
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::HitWithBullet(CBullet* inBullet)
+{
+	if (!GetDrawStatus())
+	{
+		return;
+	}
+
+	if (inBullet == nullptr)
+	{
+		return;
+	}
+
+	for (int i = 0; i < CBullet::MAX_BULLET; i++)
+	{
+		if (!inBullet[i].GetUseStatus() || !inBullet[i].GetDrawStatus() || !GetDrawStatus() || m_type == inBullet[i].GetType())
+		{
+			continue;
+		}
+
+		float Length = D3DXVec3LengthSq(&(*inBullet[i].GetScale() + m_scale));
+		float Dist = D3DXVec3LengthSq(&(*inBullet[i].GetPos() - m_pos));
+
+		if (Length - Dist == 0.0f)
+		{
+			SetDrawStatus(false);
+			inBullet[i].SetDrawStatus(false);
+		}
+	}
+}
+
+//--------------------------------------------------
+// 画面外に出た時にループする
+// Author : Yuda Kaito
+//--------------------------------------------------
+void CBullet::LoopPos()
+{
+	if (m_pos.x + m_scale.x <= 0.0f - m_scale.x)
+	{
+		m_pos.x = SCREEN_WIDTH;
+	}
+	if (m_pos.x - m_scale.x >= SCREEN_WIDTH + m_scale.x)
+	{
+		m_pos.x = 0.0f;
+	}
+	if (m_pos.y + m_scale.y <= 0.0f - m_scale.y)
+	{
+		m_pos.y = SCREEN_HEIGHT;
+	}
+	if (m_pos.y - m_scale.y >= SCREEN_HEIGHT + m_scale.y)
+	{
+		m_pos.y = 0.0f;
 	}
 }
