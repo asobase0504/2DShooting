@@ -87,10 +87,10 @@ void UninitInput(void)
 //入力処理全部の更新処理
 void UpdateInput(void)
 {
-	if (GetEnablePause())
-	{
-		g_nKeyCnt = 20;
-	}
+	//if (GetEnablePause())
+	//{
+	//	g_nKeyCnt = 20;
+	//}
 
 	//キーボードの更新処理
 	UpdateKeyboard();

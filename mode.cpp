@@ -30,8 +30,9 @@
 //==================================================
 namespace
 {
-MODE	s_mode = MODE_NONE;		// 現在のモード
-MODE	s_modeNext = MODE_NONE;	// 次のモード
+MODE s_mode = MODE_NONE;		// 現在のモード
+MODE s_modeNext = MODE_NONE;	// 次のモード
+CGame* game;
 }// namesapceはここまで
 
 //--------------------------------------------------
@@ -47,6 +48,8 @@ void InitMode(void)
 
 	// 円形の初期化
 	InitFan();
+
+	game = new CGame;
 }
 
 //--------------------------------------------------
@@ -61,7 +64,12 @@ void UninitMode(void)
 	UninitTutorial();
 
 	// ゲーム
-	UninitGame();
+	if (game != nullptr)
+	{
+		game->Uninit();
+		delete game;
+		game = nullptr;
+	}
 
 	// リザルト
 	UninitResult();
@@ -90,7 +98,7 @@ void UpdateMode(void)
 		UpdateTutorial();
 		break;
 	case MODE_GAME:		// ゲーム
-		UpdateGame();
+		game->Update();
 		break;
 	case MODE_RESULT:	// リザルト
 		UpdateResult();
@@ -119,7 +127,7 @@ void DrawMode(void)
 		DrawTutorial();
 		break;
 	case MODE_GAME:		// ゲーム
-		DrawGame();
+		game->Draw();
 		break;
 	case MODE_RESULT:	// リザルト
 		DrawResult();
@@ -165,7 +173,7 @@ void SetMode(void)
 		break;
 
 	case MODE_GAME:		// ゲーム
-		UninitGame();
+		game->Uninit();
 		break;
 
 	case MODE_RESULT:	// リザルト
@@ -210,7 +218,7 @@ void SetMode(void)
 		break;
 
 	case MODE_GAME:		// ゲーム
-		InitGame();
+		game->Init();
 		break;
 
 	case MODE_RESULT:	// リザルト

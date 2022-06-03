@@ -31,68 +31,76 @@
 
 #include <assert.h>
 
-//==================================================
-// スタティック変数
-//==================================================
-namespace
+//--------------------------------------------------
+// コンストラクタ
+//--------------------------------------------------
+CGame::CGame() :
+	isPause(false),
+	idxBg(0),
+	object(nullptr)
 {
-bool s_bPause = false;		// ポーズ中かどうか [してる  : true してない  : false]
-int s_nIdxBg;				// 背景の矩形インデックス
+	memset(player, 0, sizeof(player));
+}
 
-// インスタンスの生成
-CObject2D*	s_Object;	// オブジェクト
-CPlayer* s_pPlayer[2];	// プレイヤー
-}// namesapceはここまで
+//--------------------------------------------------
+// デストラクタ
+//--------------------------------------------------
+CGame::~CGame()
+{
+
+}
 
 //--------------------------------------------------
 // 初期化
 //--------------------------------------------------
-void InitGame(void)
+void CGame::Init()
 {
-	s_bPause = false;	// ポーズ解除
+	isPause = false;	// ポーズ解除
 
 	// 背景
-	if (s_Object == nullptr)
+	if (object == nullptr)
 	{
-		s_Object = new CObject2D;
+		object = new CObject2D;
 
-		if (s_Object == nullptr)
+		if (object == nullptr)
 		{
 			MessageBox(NULL, TEXT("動的確保に失敗しました。"), TEXT("動的確保に失敗しました。"), MB_ICONHAND);
 			assert(false);
 		}
 
 		// オブジェクトの生成
-		s_Object->Init();
-		s_Object->CreateVtxBuff();
-		s_Object->SetTexture(GetTexture(TEXTURE_BG));
-		s_Object->SetPos(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
-		s_Object->SetSize(D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f));
+		object->Init();
+		object->CreateVtxBuff();
+		object->SetTexture(GetTexture(TEXTURE_BG));
+		object->SetPos(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
+		object->SetSize(D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f));
 	}
 
 	for (int i = 0; i < 2; i++)
 	{// プレイヤー
-		if (s_pPlayer[i] != nullptr)
+		if (player[i] != nullptr)
 		{
 			continue;
 		}
 
 		/* ↓ 使用されていない場合 ↓ */
 
-		s_pPlayer[i] = new CPlayer;
+		player[i] = new CPlayer;
 
-		if (s_pPlayer == nullptr)
+		if (player != nullptr)
+		{
+			player[i]->Init();
+		}
+		else
 		{
 			MessageBox(NULL, TEXT("動的確保に失敗しました。"), TEXT("動的確保に失敗しました。"), MB_ICONHAND);
 			assert(false);
 		}
-
-		s_pPlayer[i]->Init();
 	}
 
 	// プレイヤーの生成
-	s_pPlayer[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
-	s_pPlayer[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLACK);
+	player[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
+	player[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLACK);
 
 	InitMap();
 	LoadMap();
@@ -102,34 +110,34 @@ void InitGame(void)
 //--------------------------------------------------
 // 終了
 //--------------------------------------------------
-void UninitGame(void)
+void CGame::Uninit()
 {
 	// サウンドの停止
 	StopSound();
 
 	// オブジェクトの解放
-	if (s_Object != nullptr)
+	if (object != nullptr)
 	{
-		s_Object->Uninit();
+		object->Uninit();
 
-		delete s_Object;
-		s_Object = nullptr;
+		delete object;
+		object = nullptr;
 	}
 
 	for (int i = 0; i < 2; i++)
 	{
-		if (s_pPlayer[i] == nullptr)
+		if (player[i] == nullptr)
 		{
 			continue;
 		}
 
-		s_pPlayer[i]->Uninit();
+		player[i]->Uninit();
 
-		delete s_pPlayer[i];
-		s_pPlayer[i] = nullptr;
+		delete player[i];
+		player[i] = nullptr;
 	}
 
-	StopUseRectangle(s_nIdxBg);	// 使うのを止める
+	StopUseRectangle(idxBg);	// 使うのを止める
 
 	UninitMap();
 }
@@ -137,19 +145,19 @@ void UninitGame(void)
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
-void UpdateGame(void)
+void CGame::Update()
 {
-	s_pPlayer[0]->Update();
-	s_pPlayer[1]->Update();
+	player[0]->Update();
+	player[1]->Update();
 
 	for (int i = 0; i < CBullet::MAX_BULLET; i++)
 	{
-		if (s_pPlayer[0]->GetBullet() == nullptr || !s_pPlayer[0]->GetBullet()[i].GetDrawStatus())
+		if (player[0]->GetBullet() == nullptr || !player[0]->GetBullet()[i].GetDrawStatus())
 		{
 			continue;
 		}
 
-		s_pPlayer[0]->GetBullet()[i].HitWithBullet(s_pPlayer[1]->GetBullet());
+		player[0]->GetBullet()[i].HitWithBullet(player[1]->GetBullet());
 	}
 
 	UpdateMap();
@@ -158,12 +166,12 @@ void UpdateGame(void)
 //--------------------------------------------------
 // 描画
 //--------------------------------------------------
-void DrawGame(void)
+void CGame::Draw()
 {
 	// 背景の描画
-	if (s_Object != nullptr)
+	if (object != nullptr)
 	{
-		s_Object->Draw();
+		object->Draw();
 	}
 
 	DrawMap();
@@ -172,8 +180,8 @@ void DrawGame(void)
 	DrawRectangle();
 
 	// プレイヤ―の描画
-	s_pPlayer[0]->Draw();
-	s_pPlayer[1]->Draw();
+	player[0]->Draw();
+	player[1]->Draw();
 
 	// 円形の描画
 	DrawFan();
@@ -181,16 +189,18 @@ void DrawGame(void)
 
 //--------------------------------------------------
 // ポーズの有効無効設定
+// 引数  : bool bPause / ポーズするかどうか [ true : する false : しない ]
 //--------------------------------------------------
-void SetEnablePause(bool bPause)
+void CGame::SetEnablePause(bool bPause)
 {
-	s_bPause = bPause;
+	isPause = bPause;
 }
 
 //--------------------------------------------------
 // ポーズの有効無効取得
+// 返値  : bool / ポーズしてるかどうか
 //--------------------------------------------------
-bool GetEnablePause(void)
+bool CGame::GetEnablePause(void)
 {
-	return s_bPause;
+	return isPause;
 }

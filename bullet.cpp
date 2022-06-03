@@ -149,6 +149,7 @@ void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 	float outT1;
 	float outT2;
 	float dist;
+	bool isHit = false;	// 当たったか否か
 
 	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)
 	{
@@ -168,88 +169,47 @@ void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 		{
 			if (Collision::RectangleTop(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				switch (pBlock->GetType())
-				{
-				case CBlock::TYPE::NONE:
-					SetDrawStatus(false);
-					break;
-				case CBlock::TYPE::BLACK:
-					pBlock->ChangeType(CBlock::TYPE::WHITE);
-					break;
-				case CBlock::TYPE::WHITE:
-					pBlock->ChangeType(CBlock::TYPE::BLACK);
-					break;
-				default:
-					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-					assert(false);
-					break;
-				}
+				isHit = true;
 			}
 		}
 		if (m_move.x > 0.0f)
 		{
 			if (Collision::RectangleLeft(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				switch (pBlock->GetType())
-				{
-				case CBlock::TYPE::NONE:
-					SetDrawStatus(false);
-					break;
-				case CBlock::TYPE::BLACK:
-					pBlock->ChangeType(CBlock::TYPE::WHITE);
-					break;
-				case CBlock::TYPE::WHITE:
-					pBlock->ChangeType(CBlock::TYPE::BLACK);
-					break;
-				default:
-					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-					assert(false);
-					break;
-				}
+				isHit = true;
 			}
 		}
 		if (m_move.x < 0.0f)
 		{
 			if (Collision::RectangleRight(*pBlock->GetPos(), *pBlock->GetScale(), m_pos, m_scale, &outpos, &outT1, &outT2))
 			{
-				switch (pBlock->GetType())
-				{
-				case CBlock::TYPE::NONE:
-					SetDrawStatus(false);
-					break;
-				case CBlock::TYPE::BLACK:
-					pBlock->ChangeType(CBlock::TYPE::WHITE);
-					break;
-				case CBlock::TYPE::WHITE:
-					pBlock->ChangeType(CBlock::TYPE::BLACK);
-					break;
-				default:
-					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-					assert(false);
-					break;
-				}
+				isHit = true;
 			}
 		}
 		if (m_move.y < 0.0f)
 		{
 			if (Collision::RectangleDown(*pBlock->GetPos(), *pBlock->GetScale() * 0.5f, m_pos, m_scale * 0.5f, &outpos, &outT1, &outT2))
 			{
-				switch (pBlock->GetType())
-				{
-				case CBlock::TYPE::NONE:
-					SetDrawStatus(false);
-					break;
-				case CBlock::TYPE::BLACK:
-					pBlock->ChangeType(CBlock::TYPE::WHITE);
-					break;
-				case CBlock::TYPE::WHITE:
-					pBlock->ChangeType(CBlock::TYPE::BLACK);
-					break;
-				default:
-					MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-					assert(false);
-					break;
-				}
+				isHit = true;
+			}
+		}
+		if (isHit)
+		{
+			switch (pBlock->GetType())
+			{
+			case CBlock::TYPE::NONE:
+				SetDrawStatus(false);
+				break;
+			case CBlock::TYPE::BLACK:
+				pBlock->ChangeType(CBlock::TYPE::WHITE);
+				break;
+			case CBlock::TYPE::WHITE:
+				pBlock->ChangeType(CBlock::TYPE::BLACK);
+				break;
+			default:
+				MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
+				assert(false);
+				break;
 			}
 		}
 	}
@@ -281,7 +241,7 @@ void CBullet::HitWithBullet(CBullet* inBullet)
 		float Length = D3DXVec3LengthSq(&(*inBullet[i].GetScale() + m_scale));
 		float Dist = D3DXVec3LengthSq(&(*inBullet[i].GetPos() - m_pos));
 
-		if (Length - Dist == 0.0f)
+		if (Length >= Dist)
 		{
 			SetDrawStatus(false);
 			inBullet[i].SetDrawStatus(false);
