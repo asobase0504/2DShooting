@@ -13,6 +13,9 @@
 #include "main.h"
 #include "object2d.h"
 
+//--------------------------------------------------
+// ’eƒNƒ‰ƒX
+//--------------------------------------------------
 class CBullet : public CObject2D
 {
 public:

@@ -10,6 +10,7 @@
 //==================================================
 #include "main.h"
 #include "transition.h"
+#include "renderer.h"
 
 #include <assert.h>
 
@@ -37,7 +38,7 @@ float					s_fAlpha;			// ポリゴン(フェード)のα値
 void InitTransition(void)
 {
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	s_fAlpha = 0.0f;	// 黒いポリゴン(不透明)にしておく
 	s_transition = FADE_NONE;	// 何もしてない状態
@@ -161,7 +162,7 @@ void UpdateTransition(void)
 void DrawTransition(void)
 {
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, s_pVtxBuff, 0, sizeof(VERTEX_2D));

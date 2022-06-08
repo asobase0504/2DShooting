@@ -12,6 +12,7 @@
 #include "color.h"
 #include "texture.h"
 #include "utility.h"
+#include "renderer.h"
 
 #include <assert.h>
 
@@ -75,7 +76,7 @@ void UninitFan(void)
 void DrawFan(void)
 {
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	for (int i = 0; i < MAX_FAN; i++)
 	{
@@ -158,7 +159,7 @@ int SetFanWithTex(LPDIRECT3DTEXTURE9 pTexture)
 		pFan->bAdd = false;
 
 		// 頂点バッファの生成
-		GetDevice()->CreateVertexBuffer(
+		GetRenderer()->GetDevice()->CreateVertexBuffer(
 			sizeof(VERTEX_2D) * NUM_VERTEX,
 			D3DUSAGE_WRITEONLY,
 			FVF_VERTEX_2D,

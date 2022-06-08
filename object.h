@@ -39,7 +39,7 @@ protected:
 	bool m_isUse;			// 使用しているか
 
 	/*そのうち*/
-	//CObject* m_parent;		// 親
+	//CObject* m_parent;	// 親
 };
 
 #endif // !_OBJECT_H_

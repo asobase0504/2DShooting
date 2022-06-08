@@ -148,7 +148,6 @@ void CBullet::HitWithBlock(D3DXVECTOR3 & inPos, const D3DXVECTOR3 & inVec)
 	D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	float outT1;
 	float outT2;
-	float dist;
 	bool isHit = false;	// “–‚½‚Á‚½‚©”Û‚©
 
 	for (int cntBlock = 0; cntBlock < CBlock::MAX_BLOCK; cntBlock++)

@@ -10,6 +10,7 @@
 //==================================================
 #include "main.h"
 #include "texture.h"
+#include "renderer.h"
 
 #include <assert.h>
 
@@ -53,7 +54,7 @@ LPDIRECT3DTEXTURE9 s_pTexture[TEXTURE_MAX];
 void LoadTextureAll(void)
 {
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	for (int i = 0; i < TEXTURE_MAX; ++i)
 	{
@@ -70,7 +71,7 @@ void LoadTextureAll(void)
 void LoadTexture(TEXTURE inTexture)
 {
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,

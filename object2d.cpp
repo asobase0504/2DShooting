@@ -8,6 +8,7 @@
 // include
 //=========================================
 #include "object2d.h"
+#include "renderer.h"
 
 //-----------------------------------------
 // コンストラクタ
@@ -76,7 +77,7 @@ void CObject2D::Draw()
 	/*↓ 使用している、描画する ↓*/
 
 	// デバイスへのポインタの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetRenderer()->GetDevice();
 
 	if (m_hasAdd)
 	{// 加算合成する
@@ -136,7 +137,7 @@ void CObject2D::CreateVtxBuff()
 	}
 
 	// 頂点バッファの生成
-	GetDevice()->CreateVertexBuffer(
+	GetRenderer()->GetDevice()->CreateVertexBuffer(
 		sizeof(VERTEX_2D) * NUM_VERTEX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,

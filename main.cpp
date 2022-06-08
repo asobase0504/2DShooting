@@ -9,8 +9,9 @@
 // インクルード
 //==================================================
 #include "main.h"
-#include "transition.h"
+#include "renderer.h"
 #include "input.h"
+#include "transition.h"
 #include "debug.h"
 #include "mode.h"
 #include "sound.h"
@@ -31,11 +32,10 @@ const char	*WINDOW_NAME = "練習場";	// ウインドウの名前 (キャプションに表示)
 //==================================================
 namespace
 {
-LPDIRECT3D9			s_pD3D = NULL;			// Direct3Dオブジェクトへのポインタ
-LPDIRECT3DDEVICE9	s_pD3DDevice = NULL;	// Direct3Dデバイスへのポインタ
 LPD3DXFONT			s_pFont = NULL;			// フォントへのポインタ
 int					s_nCountFPS = 0;		// FPSカウンター
 bool				s_bDebug = true;		// デバッグ表示をするか [表示  : true 非表示  : false]
+CRenderer*			s_renderer;
 }// namespaceはここまで
 
 //==================================================
@@ -201,86 +201,19 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 //--------------------------------------------------
 static HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
-	D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ
-
-	// Direct3Dオブジェクトの生成
-	s_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-
-	if (s_pD3D == NULL)
-	{// 開かなかった時用の確認
-		return E_FAIL;
-	}
-
-	if (FAILED(s_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm)))
-	{// 現在のディスプレイモードを取得
-		return E_FAIL;
-	}
-
-	// デバイスのプレゼンテーションパラメータの設定
-	ZeroMemory(&d3dpp, sizeof(d3dpp));							// パラメータのゼロクリア
-	d3dpp.BackBufferWidth = SCREEN_WIDTH;						// ゲーム画面サイズ(幅)
-	d3dpp.BackBufferHeight = SCREEN_HEIGHT;						// ゲーム画面サイズ(高さ)
-	d3dpp.BackBufferFormat = d3ddm.Format;						// バックバッファの形式
-	d3dpp.BackBufferCount = 1;									// バックバッファの数
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;					// ダブルバッファの切り替え(映像信号に同期)
-	d3dpp.EnableAutoDepthStencil = TRUE;						// デプスバッファとステンシルバッファを作成
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;					// デプスバッファとして16bitを使う
-	d3dpp.Windowed = bWindow;									// ウインドウモード
-	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;	// リフレッシュレート
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
-
-	// Direct3Dデバイスの生成(描画処理と頂点処理をハードウェア)
-	if (FAILED(s_pD3D->CreateDevice(
-		D3DADAPTER_DEFAULT,
-		D3DDEVTYPE_HAL,
-		hWnd,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&d3dpp,
-		&s_pD3DDevice)))
+	if (s_renderer == nullptr)
 	{
-		// Direct3Dデバイスの生成(描画処理はハードウェア、頂点処理はCPUで行う)
-		if (FAILED(s_pD3D->CreateDevice(
-			D3DADAPTER_DEFAULT,
-			D3DDEVTYPE_HAL,
-			hWnd,
-			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-			&d3dpp,
-			&s_pD3DDevice)))
+		s_renderer = new CRenderer;
+
+		if (s_renderer != nullptr)
 		{
-			// Direct3Dデバイスの生成(描画処理と頂点処理をCPUで行う)
-			if (FAILED(s_pD3D->CreateDevice(
-				D3DADAPTER_DEFAULT,
-				D3DDEVTYPE_REF,
-				hWnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-				&d3dpp,
-				&s_pD3DDevice)))
+			// レンダーステートの初期化
+			if (FAILED(s_renderer->Init(hWnd, true)))
 			{
 				return E_FAIL;
 			}
 		}
 	}
-
-	// レンダーステートの設定
-	s_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	s_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	s_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	s_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	// サンプラーステートの設定
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// 画像を小さくしても綺麗にする
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// 画像を大きくしても綺麗にする
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);	// テクスチャのUの繰り返し方を設定
-	s_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);	// テクスチャのVの繰り返し方を設定
-
-	// テクスチャステージステートパラメータの設定
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);	// ポリゴンとテクスチャのαをまぜる
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);	// １つ目の色はテクスチャの色
-	s_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);	// ２つ目の色は現在の色
-
-	// デバッグ表示用フォントの生成
-	InitDebug();
 
 	// 入力処理の初期化
 	if (FAILED(InitInput(hInstance, hWnd)))
@@ -289,7 +222,7 @@ static HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	}
 
 	// サウンドの初期化
-	InitSound(hWnd);
+//	InitSound(hWnd);
 
 	// 遷移の初期化
 	InitTransition();
@@ -309,7 +242,15 @@ static HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 static void Uninit(void)
 {
 	// サウンドの終了
-	UninitSound();
+//	UninitSound();
+
+	// レンダーステートの終了
+	if (s_renderer != nullptr)
+	{
+		s_renderer->Uninit();
+		delete s_renderer;
+		s_renderer = nullptr;
+	}
 
 	// 入力処理の終了
 	UninitInput();
@@ -322,18 +263,6 @@ static void Uninit(void)
 
 	// デバッグの終了
 	UninitDebug();
-
-	if (s_pD3DDevice != NULL)
-	{// Direct3Dデバイスの解放
-		s_pD3DDevice->Release();
-		s_pD3DDevice = NULL;
-	}
-
-	if (s_pD3D != NULL)
-	{// Direct3Dオブジェクトの解放
-		s_pD3D->Release();
-		s_pD3D = NULL;
-	}
 }
 
 //--------------------------------------------------
@@ -341,6 +270,12 @@ static void Uninit(void)
 //-------------------------------------------------- 
 static void Update(void)
 {
+	// レンダーステートの更新
+	if (s_renderer != nullptr)
+	{
+		s_renderer->Update();
+	}
+
 	// 入力処理の更新
 	UpdateInput();
 
@@ -369,48 +304,11 @@ static void Update(void)
 //--------------------------------------------------
 static void Draw(void)
 {
-	// 画面クリア(バッグバッファ＆Zバッファのクリア)
-	s_pD3DDevice->Clear(
-		0,
-		NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0),
-		1.0f,
-		0);
-
-	// 描画開始
-	if (SUCCEEDED(s_pD3DDevice->BeginScene()))
-	{// 描画開始が成功した場合
-		// モードの描画
-		DrawMode();
-
-		// フェードの描画
-		DrawTransition();
-
- #ifdef  _DEBUG
-
-		if (s_bDebug)
-		{// 表示する？
-			// デバッグの表示
-			DrawDebug();
-		}
-
- #endif //  _DEBUG
-
-		// 描画終了
-		s_pD3DDevice->EndScene();
+	// レンダーステートの更新
+	if (s_renderer != nullptr)
+	{
+		s_renderer->Draw();
 	}
-
-	// バックバッファとフロントバッファの入れ替え
-	s_pD3DDevice->Present(NULL, NULL, NULL, NULL);
-}
-
-//--------------------------------------------------
-// デバイスの取得
-//--------------------------------------------------
-LPDIRECT3DDEVICE9 GetDevice(void)
-{
-	return s_pD3DDevice;
 }
 
 //--------------------------------------------------
@@ -419,4 +317,12 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 int GetFPS(void)
 {
 	return s_nCountFPS;
+}
+
+//=============================================================================
+// レンダリングのインスタンス取得
+//=============================================================================
+CRenderer* GetRenderer()
+{
+	return s_renderer;
 }
