@@ -13,6 +13,7 @@
 #include "input.h"
 #include "game.h"
 #include "transition.h"
+#include "application.h"
 #include "renderer.h"
 #include "mode.h"
 
@@ -42,7 +43,7 @@ LPD3DXFONT s_pFont = NULL;	// フォントへのポインタ
 void InitDebug(void)
 {
 	// デバッグ表示用フォントの生成
-	D3DXCreateFont(GetRenderer()->GetDevice(), 32, 0, 0, 0, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &s_pFont);
+	D3DXCreateFont(CApplication::Instance()->GetRenderer()->GetDevice(), 32, 0, 0, 0, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &s_pFont);
 }
 
 //=========================================

@@ -9,11 +9,7 @@
 // インクルード
 //==================================================
 #include "main.h"
-#include "renderer.h"
-#include "input.h"
-#include "transition.h"
-#include "debug.h"
-#include "mode.h"
+#include "application.h"
 #include "sound.h"
 
 #include <stdio.h>
@@ -32,10 +28,10 @@ const char	*WINDOW_NAME = "練習場";	// ウインドウの名前 (キャプションに表示)
 //==================================================
 namespace
 {
-LPD3DXFONT			s_pFont = NULL;			// フォントへのポインタ
-int					s_nCountFPS = 0;		// FPSカウンター
-bool				s_bDebug = true;		// デバッグ表示をするか [表示  : true 非表示  : false]
-CRenderer*			s_renderer;
+LPD3DXFONT s_pFont = NULL;	// フォントへのポインタ
+int s_nCountFPS = 0;		// FPSカウンター
+bool s_bDebug = true;		// デバッグ表示をするか [表示  : true 非表示  : false]
+CApplication* application;
 }// namespaceはここまで
 
 //==================================================
@@ -147,11 +143,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 			{// 60分の1秒経過
 				dwExecLastTime = dwCurrentTime;	// 処理開始の時刻[現在時刻]を保存
 
-				// 更新
-				Update();
-
-				// 描画
-				Draw();
+				Update();	// 更新
+				Draw();		// 描画
 
 				dwFrameCount++;	// フレームカウントを加算
 			}
@@ -201,37 +194,9 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 //--------------------------------------------------
 static HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	if (s_renderer == nullptr)
-	{
-		s_renderer = new CRenderer;
+	application = CApplication::Instance();
 
-		if (s_renderer != nullptr)
-		{
-			// レンダーステートの初期化
-			if (FAILED(s_renderer->Init(hWnd, true)))
-			{
-				return E_FAIL;
-			}
-		}
-	}
-
-	// 入力処理の初期化
-	if (FAILED(InitInput(hInstance, hWnd)))
-	{
-		return E_FAIL;
-	}
-
-	// サウンドの初期化
-//	InitSound(hWnd);
-
-	// 遷移の初期化
-	InitTransition();
-
-	// モードの初期化
-	InitMode();
-
-	// モードの変更
-	ChangeMode(MODE_GAME);
+	application->Init(hInstance,hWnd,bWindow);
 
 	return S_OK;
 }
@@ -241,28 +206,7 @@ static HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 //--------------------------------------------------
 static void Uninit(void)
 {
-	// サウンドの終了
-//	UninitSound();
-
-	// レンダーステートの終了
-	if (s_renderer != nullptr)
-	{
-		s_renderer->Uninit();
-		delete s_renderer;
-		s_renderer = nullptr;
-	}
-
-	// 入力処理の終了
-	UninitInput();
-
-	// 遷移の終了
-	UninitTransition();
-
-	// モードの終了
-	UninitMode();
-
-	// デバッグの終了
-	UninitDebug();
+	application->Uninit();
 }
 
 //--------------------------------------------------
@@ -270,33 +214,7 @@ static void Uninit(void)
 //-------------------------------------------------- 
 static void Update(void)
 {
-	// レンダーステートの更新
-	if (s_renderer != nullptr)
-	{
-		s_renderer->Update();
-	}
-
-	// 入力処理の更新
-	UpdateInput();
-
-	// モードの更新
-	UpdateMode();
-
-	// 遷移の更新
-	UpdateTransition();
-
-	// モードの設定
-	SetMode();
-
- #ifdef  _DEBUG
-
-	if (GetKeyboardTrigger(DIK_F1) || GetJoypadTrigger(JOYKEY_BACK,0))
-	{// F1キーが押された
-		s_bDebug = !s_bDebug;
-	}
-
- #endif //  _DEBUG
-
+	application->Update();
 }
 
 //--------------------------------------------------
@@ -304,11 +222,7 @@ static void Update(void)
 //--------------------------------------------------
 static void Draw(void)
 {
-	// レンダーステートの更新
-	if (s_renderer != nullptr)
-	{
-		s_renderer->Draw();
-	}
+	application->Draw();
 }
 
 //--------------------------------------------------
@@ -317,12 +231,4 @@ static void Draw(void)
 int GetFPS(void)
 {
 	return s_nCountFPS;
-}
-
-//=============================================================================
-// レンダリングのインスタンス取得
-//=============================================================================
-CRenderer* GetRenderer()
-{
-	return s_renderer;
 }

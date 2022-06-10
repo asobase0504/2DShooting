@@ -51,8 +51,4 @@ typedef struct
 // 返値  : LPDIRECT3DDEVICE9 / デバイス
 //--------------------------------------------------
 int GetFPS(void);
-
-class CRenderer;
-CRenderer* GetRenderer();
-
 #endif // !_MAIN_H_
