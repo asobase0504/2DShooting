@@ -6,6 +6,7 @@
 //=========================================
 #include "renderer.h"
 #include "object.h"
+#include "application.h"
 #include "transition.h"
 #include "debug.h"
 #include "mode.h"
@@ -133,7 +134,7 @@ void CRenderer::Draw()
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
 		// モードの描画
-		DrawMode();
+		CApplication::Instance()->GetMode()->Draw();
 
 		// フェードの描画
 		DrawTransition();

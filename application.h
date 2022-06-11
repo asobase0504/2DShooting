@@ -9,7 +9,12 @@
 
 #include "main.h"
 
+//--------------------------------------------------
+// 前方宣言
+//--------------------------------------------------
 class CRenderer;
+class CMode;
+
 //--------------------------------------------------
 // レンダーステートクラス
 //--------------------------------------------------
@@ -31,9 +36,11 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
-	CRenderer* GetRenderer();
+	CRenderer* GetRenderer() { return s_renderer; }
+	CMode* GetMode() { return mode; }
 private:
 	CRenderer* s_renderer;				// レンダーステートのインスタンス
+	CMode* mode;
 };
 
 #endif // !_APPLICATION_H_

@@ -35,7 +35,8 @@ CApplication * CApplication::Instance()
 // コンストラクタ
 //=============================================================================
 CApplication::CApplication() :
-	s_renderer(nullptr)
+	s_renderer(nullptr),
+	mode(nullptr)
 {
 }
 
@@ -78,10 +79,20 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	InitTransition();
 
 	// モードの初期化
-	InitMode();
+	if (mode == nullptr)
+	{
+		mode = new CMode;
 
-	// モードの変更
-	ChangeMode(MODE_GAME);
+		if (mode != nullptr)
+		{
+			// レンダーステートの初期化
+			if (FAILED(mode->Init()))
+			{
+				return E_FAIL;
+			}
+		}
+	}
+	mode->Change(CMode::MODE_GAME);
 
 	return S_OK;
 }
@@ -109,7 +120,7 @@ void CApplication::Uninit()
 	UninitTransition();
 
 	// モードの終了
-	UninitMode();
+	mode->Uninit();
 
 	// デバッグの終了
 	UninitDebug();
@@ -130,13 +141,13 @@ void CApplication::Update()
 	UpdateInput();
 
 	// モードの更新
-	UpdateMode();
+	mode->Update();
 
 	// 遷移の更新
 	UpdateTransition();
 
 	// モードの設定
-	SetMode();
+	mode->Set();
 
 //#ifdef  _DEBUG
 //
@@ -158,12 +169,4 @@ void CApplication::Draw()
 	{
 		s_renderer->Draw();
 	}
-}
-
-//=============================================================================
-// レンダリングのインスタンス取得
-//=============================================================================
-CRenderer* CApplication::GetRenderer()
-{
-	return s_renderer;
 }

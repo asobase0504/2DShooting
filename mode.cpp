@@ -25,20 +25,15 @@
 #include <assert.h>
 #include <time.h>
 
-//==================================================
-// スタティック変数
-//==================================================
-namespace
+CMode::CMode()
 {
-MODE s_mode = MODE_NONE;		// 現在のモード
-MODE s_modeNext = MODE_NONE;	// 次のモード
-CGame* game;
-}// namesapceはここまで
+}
 
-//--------------------------------------------------
-// 初期化
-//--------------------------------------------------
-void InitMode(void)
+CMode::~CMode()
+{
+}
+
+HRESULT CMode::Init()
 {
 	// テクスチャの読み込み
 	srand((unsigned int)time(NULL));
@@ -50,18 +45,17 @@ void InitMode(void)
 	InitFan();
 
 	game = new CGame;
+
+	return S_OK;
 }
 
-//--------------------------------------------------
-// 終了
-//--------------------------------------------------
-void UninitMode(void)
+void CMode::Uninit()
 {
-	// タイトル
-	UninitTitle();
+	UninitTitle();	// タイトル
 
-	// チュートリアル
-	UninitTutorial();
+
+	UninitTutorial();	// チュートリアル
+
 
 	// ゲーム
 	if (game != nullptr)
@@ -84,12 +78,9 @@ void UninitMode(void)
 	UnloadTextureAll();
 }
 
-//--------------------------------------------------
-// 更新
-//--------------------------------------------------
-void UpdateMode(void)
+void CMode::Update()
 {
-	switch (s_mode)
+	switch (mode)
 	{// どのモード？
 	case MODE_TITLE:	// タイトル
 		UpdateTitle();
@@ -113,12 +104,9 @@ void UpdateMode(void)
 	}
 }
 
-//--------------------------------------------------
-// 描画
-//--------------------------------------------------
-void DrawMode(void)
+void CMode::Draw()
 {
-	switch (s_mode)
+	switch (mode)
 	{// どのモード？
 	case MODE_TITLE:	// タイトル
 		DrawTitle();
@@ -142,12 +130,9 @@ void DrawMode(void)
 	}
 }
 
-//--------------------------------------------------
-// 設定
-//--------------------------------------------------
-void SetMode(void)
+void CMode::Set()
 {
-	if (s_modeNext == MODE_NONE)
+	if (modeNext == MODE_NONE)
 	{// 次のモードが決まってない
 		return;
 	}
@@ -162,7 +147,7 @@ void SetMode(void)
 		return;
 	}
 
-	switch (s_mode)
+	switch (mode)
 	{// 現在のモードの終了
 	case MODE_TITLE:	// タイトル
 		UninitTitle();
@@ -205,9 +190,9 @@ void SetMode(void)
 	// 円形の初期化
 	InitFan();
 
-	s_mode = s_modeNext;	// 現在の画面(モード)を切り替える
-	
-	switch (s_modeNext)
+	mode = modeNext;	// 現在の画面(モード)を切り替える
+
+	switch (modeNext)
 	{// 次のモードの初期化
 	case MODE_TITLE:	// タイトル
 		InitTitle();
@@ -232,23 +217,12 @@ void SetMode(void)
 		break;
 	}
 
-	s_modeNext = MODE_NONE;
+	modeNext = MODE_NONE;
 }
 
-//--------------------------------------------------
-// 取得
-//--------------------------------------------------
-MODE GetMode(void)
+void CMode::Change(CMode::MODE inmodeNext)
 {
-	return s_mode;
-}
+	assert(inmodeNext >= 0 && inmodeNext < MODE_MAX);
 
-//--------------------------------------------------
-// 変更
-//--------------------------------------------------
-void ChangeMode(MODE modeNext)
-{
-	assert(modeNext >= 0 && modeNext < MODE_MAX);
-
-	s_modeNext = modeNext;
+	modeNext = inmodeNext;
 }

@@ -93,7 +93,7 @@ void Input(void)
 {
 	if (GetFunctionKeyTrigger(FUNCTION_KEY_DESISION))
 	{//決定キー(ENTERキー)が押されたかどうか
-		ChangeMode(MODE_GAME);
+//		ChangeMode(MODE_GAME);
 	}
 }
 }// namespaceはここまで
