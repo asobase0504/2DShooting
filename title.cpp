@@ -1,116 +1,90 @@
-//**************************************************
+//==================================================
 //
-// Hackathon ( title.cpp )
-// Author  : katsuki mizuki
+// ゲームモード
+// Author : Yuda Kaito
 //
-//**************************************************
+//==================================================
 
 //==================================================
 // インクルード
 //==================================================
-#include "main.h" 
-#include "input.h"
-#include "mode.h"
-#include "transition.h"
-#include "rectangle.h"
+// 主要系統
+#include "main.h"
 #include "title.h"
-#include "color.h"
+#include "fade.h"
+#include "input.h"
 #include "sound.h"
-#include "texture.h"
+// 描画系統
+#include "rectangle.h"
+#include "fan.h"
+#include "color.h"
+// 処理系統
+#include "time.h"
 #include "utility.h"
+#include "block.h"
+#include "map.h"
+#include "player.h"
+#include "bullet.h"
+// オブジェクト系統
+#include "object.h"
+#include "object2d.h"
 
 #include <assert.h>
 
-//==================================================
-// 定義
-//==================================================
-namespace
+//--------------------------------------------------
+// コンストラクタ
+//--------------------------------------------------
+CTitle::CTitle()
 {
-const float	TITLE_WIDTH = 600.0f;	// タイトルの幅
-const float	TITLE_HEIGHT = 600.0f;	// タイトルの高さ
 
-typedef enum
-{
-	MENU_GAME = 0,	// ゲーム
-	MENU_MAX
-}MENU;
-}// namespaceはここまで
+}
 
-//==================================================
-// スタティック変数
-//==================================================
-namespace
+//--------------------------------------------------
+// デストラクタ
+//--------------------------------------------------
+CTitle::~CTitle()
 {
-int	s_nIdx;				// 矩形のインデックス
-}// namespaceはここまで
 
-//==================================================
-// スタティック関数プロトタイプ宣言
-//==================================================
-namespace
-{
-void Input(void);
-}// namespaceはここまで
+}
 
 //--------------------------------------------------
 // 初期化
 //--------------------------------------------------
-void InitTitle(void)
+HRESULT  CTitle::Init()
 {
-	{// ロゴ
-		// 矩形の設定
-		s_nIdx = SetRectangle(TEXTURE_BG);
-
-		D3DXVECTOR3 size = D3DXVECTOR3(TITLE_WIDTH, TITLE_HEIGHT, 0.0f);
-		D3DXVECTOR3 pos = D3DXVECTOR3(SCREEN_WIDTH * 0.275f, SCREEN_HEIGHT * 0.5f, 0.0f);
-
-		// 矩形の位置の設定
-		SetPosRectangle(s_nIdx, pos, size);
-	}
+	return S_OK;
 }
 
 //--------------------------------------------------
 // 終了
 //--------------------------------------------------
-void UninitTitle(void)
+void CTitle::Uninit()
 {
-	// 使うのを止める
-	StopUseRectangle(s_nIdx);
+
 }
 
 //--------------------------------------------------
 // 更新
 //--------------------------------------------------
-void UpdateTitle(void)
+void CTitle::Update()
 {
-	// 入力
-	Input();
+
 }
 
 //--------------------------------------------------
 // 描画
 //--------------------------------------------------
-void DrawTitle(void)
+void CTitle::Draw()
 {
-	// 矩形の描画
-	DrawRectangle();
-}
+	// 背景の描画
+	//if (object != nullptr)
+	//{
+	//	object->Draw();
+	//}
 
-namespace
-{
-//--------------------------------------------------
-// 入力
-//--------------------------------------------------
-void Input(void)
-{
-	if (GetTransition() != FADE_NONE)
-	{// フェードしている
-		return;
-	}
+	//DrawMap();
 
-	if (GetFunctionKeyTrigger(FUNCTION_KEY_DESISION))
-	{//決定キー(ENTERキー)が押されたかどうか
-//		ChangeMode(MODE_TUTORIAL);
-	}
+	// プレイヤ―の描画
+	//player[0]->Draw();
+	//player[1]->Draw();
 }
-}// namespaceはここまで

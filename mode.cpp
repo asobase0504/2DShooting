@@ -33,20 +33,8 @@ CMode::~CMode()
 {
 }
 
-HRESULT CMode::Init()
-{
-	// テクスチャの読み込み
-	srand((unsigned int)time(NULL));
-
-	game = new CGame;
-
-	return S_OK;
-}
-
 void CMode::Uninit()
 {
-	UninitTitle();	// タイトル
-
 	UninitTutorial();	// チュートリアル
 
 	// ゲーム
@@ -69,7 +57,6 @@ void CMode::Update()
 	switch (mode)
 	{// どのモード？
 	case MODE_TITLE:	// タイトル
-		UpdateTitle();
 		break;
 	case MODE_TUTORIAL:	// チュートリアル
 		UpdateTutorial();
@@ -95,7 +82,6 @@ void CMode::Draw()
 	switch (mode)
 	{// どのモード？
 	case MODE_TITLE:	// タイトル
-		DrawTitle();
 		break;
 	case MODE_TUTORIAL:	// チュートリアル
 		DrawTutorial();
@@ -136,7 +122,6 @@ void CMode::Set()
 	switch (mode)
 	{// 現在のモードの終了
 	case MODE_TITLE:	// タイトル
-		UninitTitle();
 		break;
 
 	case MODE_TUTORIAL:	// チュートリアル
@@ -169,7 +154,6 @@ void CMode::Set()
 	switch (modeNext)
 	{// 次のモードの初期化
 	case MODE_TITLE:	// タイトル
-		InitTitle();
 		break;
 
 	case MODE_TUTORIAL:	// チュートリアル
@@ -177,7 +161,7 @@ void CMode::Set()
 		break;
 
 	case MODE_GAME:		// ゲーム
-		game->Init();
+		//game->Init();
 		break;
 
 	case MODE_RESULT:	// リザルト
@@ -194,7 +178,7 @@ void CMode::Set()
 	modeNext = MODE_NONE;
 }
 
-void CMode::Change(CMode::MODE inmodeNext)
+void CMode::Change(CMode::TYPE inmodeNext)
 {
 	assert(inmodeNext >= 0 && inmodeNext < MODE_MAX);
 

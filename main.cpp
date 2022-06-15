@@ -11,7 +11,7 @@
 #include "main.h"
 #include "application.h"
 #include "sound.h"
-
+#include <time.h>
 #include <stdio.h>
 
 //==================================================
@@ -86,6 +86,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 		NULL,						// メニューハンドルまたは子ウインドウID
 		hInstance,					// インスタンスハンドル
 		NULL);						// ウインドウ作成データ
+
+	// 乱数の初期化
+	srand((unsigned int)time(NULL));
 
 	// 初期化
 	if (FAILED(Init(hInstance, hWnd, TRUE)))

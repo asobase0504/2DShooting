@@ -73,7 +73,7 @@ void DrawDebug(void)
 	sprintf(&aStr[nLength], "FPS  : %2d\n\n", GetFPS());
 	nLength = (int)strlen(&aStr[0]);
 
-//	sprintf(&aStr[nLength], "MODE : %2d\n\n", GetMode());
+//	sprintf(&aStr[nLength], "TYPE : %2d\n\n", GetMode());
 	nLength = (int)strlen(&aStr[0]);
 
 	sprintf(&aStr[nLength], "FADE : %2d\n\n", GetTransition());

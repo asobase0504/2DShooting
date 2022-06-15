@@ -8,6 +8,11 @@
 #define _GAME_H_	//２重インクルード防止のマクロ定義
 
 //--------------------------------------------------
+// include
+//--------------------------------------------------
+#include "mode.h"
+
+//--------------------------------------------------
 // 前方宣言
 //--------------------------------------------------
 class CObject2D;
@@ -16,16 +21,16 @@ class CPlayer;
 //--------------------------------------------------
 // GameClass
 //--------------------------------------------------
-class CGame
+class CGame : public CMode
 {
 public:
 	CGame();
 	~CGame();
 
-	void Init();
-	void Uninit();
-	void Update();
-	void Draw();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update() override;
+	void Draw() override;
 	void SetEnablePause(bool bPause);
 	bool GetEnablePause();
 	CPlayer* GetPlayer();

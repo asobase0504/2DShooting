@@ -54,7 +54,7 @@ CGame::~CGame()
 //--------------------------------------------------
 // ‰Šú‰»
 //--------------------------------------------------
-void CGame::Init()
+HRESULT  CGame::Init()
 {
 	isPause = false;	// ƒ|[ƒY‰ðœ
 
@@ -106,6 +106,8 @@ void CGame::Init()
 	InitMap();
 	LoadMap();
 	SetMap();
+
+	return S_OK;
 }
 
 //--------------------------------------------------
@@ -169,16 +171,16 @@ void CGame::Update()
 void CGame::Draw()
 {
 	// ”wŒi‚Ì•`‰æ
-	if (object != nullptr)
-	{
-		object->Draw();
-	}
+	//if (object != nullptr)
+	//{
+	//	object->Draw();
+	//}
 
-	DrawMap();
+	//DrawMap();
 
 	// ƒvƒŒƒCƒ„\‚Ì•`‰æ
-	player[0]->Draw();
-	player[1]->Draw();
+	//player[0]->Draw();
+	//player[1]->Draw();
 }
 
 //--------------------------------------------------

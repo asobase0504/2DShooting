@@ -11,6 +11,8 @@
 #include "transition.h"
 #include "debug.h"
 #include "mode.h"
+#include "game.h"
+#include "title.h"
 #include "sound.h"
 
 //=============================================================================
@@ -81,7 +83,7 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// ÉÇÅ[ÉhÇÃèâä˙âª
 	if (mode == nullptr)
 	{
-		mode = new CMode;
+		mode = new CGame;
 
 		if (mode != nullptr)
 		{

@@ -26,7 +26,7 @@ public:
 	//==================================================
 	// 列挙型
 	//==================================================
-	typedef enum
+	enum TYPE
 	{
 		MODE_TITLE = 0,	// タイトル
 		MODE_TUTORIAL,	// チュートリアル
@@ -34,22 +34,23 @@ public:
 		MODE_RESULT,	// リザルト
 		MODE_MAX,
 		MODE_NONE
-	}MODE;
+	};
 
 public:
 	CMode();
 	~CMode();
 
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
+	virtual HRESULT Init() = 0;
+	virtual void Uninit();
+	virtual void Update();
+	virtual void Draw();
+
 	void Set();
-	MODE GetMode() { return mode; }
-	void Change(MODE modeNext);
+	TYPE GetMode() { return mode; }
+	void Change(TYPE modeNext);
 private:
-	MODE mode = MODE_NONE;		// 現在のモード
-	MODE modeNext = MODE_NONE;	// 次のモード
+	TYPE mode = MODE_NONE;		// 現在のモード
+	TYPE modeNext = MODE_NONE;	// 次のモード
 	CGame* game;
 };
 
