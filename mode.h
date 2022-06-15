@@ -35,6 +35,7 @@ public:
 		MODE_MAX,
 		MODE_NONE
 	}MODE;
+
 public:
 	CMode();
 	~CMode();

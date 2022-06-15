@@ -28,7 +28,6 @@ const char	*WINDOW_NAME = "練習場";	// ウインドウの名前 (キャプションに表示)
 //==================================================
 namespace
 {
-LPD3DXFONT s_pFont = NULL;	// フォントへのポインタ
 int s_nCountFPS = 0;		// FPSカウンター
 bool s_bDebug = true;		// デバッグ表示をするか [表示  : true 非表示  : false]
 CApplication* application;
@@ -65,12 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 	};
 
 	HWND hWnd;											// ウインドウハンドル (識別子)
-	MSG msg;											// メッセージを格納する変数
 	RECT rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};	// 画面サイズの構造体
-	DWORD dwCurrentTime;								// 現在時刻
-	DWORD dwExecLastTime;								// 最後に処理した時刻
-	DWORD dwFrameCount;									// フレームカウント
-	DWORD dwFPSLastTime;								// 最後にFPSを計算した時刻
 
 	// ウインドウクラスの登録
 	RegisterClassEx(&wcex);
@@ -102,14 +96,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 	// 分解能を設定
 	timeBeginPeriod(1);
 
-	dwCurrentTime = 0;				// 初期化する
-	dwExecLastTime = timeGetTime();	// 現在時刻を取得 (保存)
-	dwFrameCount = 0;				// 初期化する
-	dwFPSLastTime = timeGetTime();	// 現在時刻を取得 (保存)
-
 	// ウインドウの表示
 	ShowWindow(hWnd, nCmdShow);	// ウインドウの表示状態を設定
 	UpdateWindow(hWnd);			// クライアント領域を更新
+
+	MSG msg;	// メッセージを格納する変数
+	DWORD dwCurrentTime = 0;				// 現在時刻
+	DWORD dwExecLastTime = timeGetTime();	// 最後に処理した時刻
+	DWORD dwFrameCount = 0;					// フレームカウント
+	DWORD dwFPSLastTime = timeGetTime();	// 最後にFPSを計算した時刻
 
 	while (1)
 	{// メッセージループ

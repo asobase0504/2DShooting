@@ -38,12 +38,6 @@ HRESULT CMode::Init()
 	// テクスチャの読み込み
 	srand((unsigned int)time(NULL));
 
-	// 矩形の初期化
-	InitRectangle();
-
-	// 円形の初期化
-	InitFan();
-
 	game = new CGame;
 
 	return S_OK;
@@ -53,9 +47,7 @@ void CMode::Uninit()
 {
 	UninitTitle();	// タイトル
 
-
 	UninitTutorial();	// チュートリアル
-
 
 	// ゲーム
 	if (game != nullptr)
@@ -67,12 +59,6 @@ void CMode::Uninit()
 
 	// リザルト
 	UninitResult();
-
-	// 矩形
-	UninitRectangle();
-
-	// 円形
-	UninitFan();
 
 	// テクスチャ
 	UnloadTextureAll();
@@ -177,18 +163,6 @@ void CMode::Set()
 
 	// テクスチャ
 	UnloadTextureAll();
-
-	// 矩形の終了
-	UninitRectangle();
-
-	// 矩形の初期化
-	InitRectangle();
-
-	// 円形の終了
-	UninitFan();
-
-	// 円形の初期化
-	InitFan();
 
 	mode = modeNext;	// 現在の画面(モード)を切り替える
 

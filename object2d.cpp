@@ -70,7 +70,7 @@ void CObject2D::Update()
 //-----------------------------------------
 void CObject2D::Draw()
 {
-	if (!m_isUse || !m_isDraw)
+	if (!m_isDraw)
 	{// égópÇµÇƒÇ¢Ç»Ç¢ÅAï`âÊÇ∑ÇÈÇµÇ»Ç¢
 		return;
 	}

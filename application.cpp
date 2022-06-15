@@ -73,7 +73,7 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	}
 
 	// サウンドの初期化
-	//	InitSound(hWnd);
+	//InitSound(hWnd);
 
 	// 遷移の初期化
 	InitTransition();
@@ -120,7 +120,12 @@ void CApplication::Uninit()
 	UninitTransition();
 
 	// モードの終了
-	mode->Uninit();
+	if (mode != nullptr)
+	{
+		mode->Uninit();
+		delete mode;
+		mode = nullptr;
+	}
 
 	// デバッグの終了
 	UninitDebug();
@@ -137,14 +142,9 @@ void CApplication::Update()
 		s_renderer->Update();
 	}
 
-	// 入力処理の更新
-	UpdateInput();
-
-	// モードの更新
-	mode->Update();
-
-	// 遷移の更新
-	UpdateTransition();
+	UpdateInput();		// 入力
+	mode->Update();		// モード
+	UpdateTransition();	// 遷移
 
 	// モードの設定
 	mode->Set();

@@ -39,7 +39,8 @@ CGame::CGame() :
 	idxBg(0),
 	object(nullptr)
 {
-	memset(player, 0, sizeof(player));
+	player[0] = nullptr;
+	player[1] = nullptr;
 }
 
 //--------------------------------------------------
@@ -119,7 +120,6 @@ void CGame::Uninit()
 	if (object != nullptr)
 	{
 		object->Uninit();
-
 		delete object;
 		object = nullptr;
 	}
@@ -176,15 +176,9 @@ void CGame::Draw()
 
 	DrawMap();
 
-	// ‹éŒ`‚Ì•`‰æ
-	DrawRectangle();
-
 	// ƒvƒŒƒCƒ„\‚Ì•`‰æ
 	player[0]->Draw();
 	player[1]->Draw();
-
-	// ‰~Œ`‚Ì•`‰æ
-	DrawFan();
 }
 
 //--------------------------------------------------
