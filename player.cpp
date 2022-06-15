@@ -123,16 +123,14 @@ void CPlayer::Draw()
 //--------------------------------------------------
 void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 {
-	m_pos = pos;	// 位置
-	m_scale = size;	// 大きさ
 	m_type = type;	// 種別
 
-	CObject2D::CreateVtxBuff();		// 頂点バッファの生成
-	CObject2D::SetTexture(GetTexture(TEXTURE_Number_001));	// テクスチャの設定
-	CObject2D::SetPos(m_pos);		// 位置の設定
-	CObject2D::SetSize(m_scale);	// 大きさの設定
+	CreateVtxBuff();	// 頂点バッファの生成
+	SetTexture(GetTexture(TEXTURE_Number_001));	// テクスチャの設定
+	SetPos(pos);	// 位置の設定
+	SetSize(size);	// 大きさの設定
 
-	switch (type)
+	switch (m_type)
 	{
 	case PALYERTYPE::WHITE:
 		CObject2D::SetColor(D3DXCOLOR(1.0f,1.0f,1.0f,1.0f));
