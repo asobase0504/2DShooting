@@ -23,7 +23,7 @@ CApplication* CApplication::application = nullptr;
 //=============================================================================
 // インスタンスの生成
 //=============================================================================
-CApplication * CApplication::Instance()
+CApplication* CApplication::Instance()
 {
 	if (application == nullptr)
 	{
@@ -149,7 +149,7 @@ void CApplication::Update()
 	UpdateTransition();	// 遷移
 
 	// モードの設定
-	mode->Set();
+	//mode->Set();
 
 //#ifdef  _DEBUG
 //

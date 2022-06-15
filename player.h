@@ -27,11 +27,11 @@ public:
 	//--------------------------------------------------
 	// ブロック状態の列挙型
 	//--------------------------------------------------
-	enum PALYERTYPE
+	enum class TYPE
 	{
 		NONE = 0,
-		WHITE,
-		BLACK,
+		PLAYER_01,
+		PLAYER_02,
 		MAX
 	};
 public:
@@ -42,7 +42,7 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
-	void Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type);
+	void Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, TYPE type);
 	CBullet* GetBullet() { return m_bullet; }
 
 private:
@@ -54,7 +54,7 @@ private:
 private:
 	int m_nIdx;	// 番号
 	CBullet* m_bullet;
-	PALYERTYPE m_type;
+	TYPE m_type;
 	D3DXVECTOR3 m_posOld;	// 前回位置
 	D3DXVECTOR3 m_posInblock;	// 自分が乗っているブロックの位置
 	D3DXVECTOR3 m_size;

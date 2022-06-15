@@ -31,7 +31,7 @@ CPlayer::CPlayer() :
 	CObject2D(),
 	m_nIdx(0),
 	m_bullet(nullptr),
-	m_type(NONE),
+	m_type(TYPE::NONE),
 	m_posOld(D3DXVECTOR3(0.0f,0.0f,0.0f)),
 	m_size(D3DXVECTOR3(0.0f, 0.0f, 0.0f)),
 	m_move(D3DXVECTOR3(0.0f, 0.0f, 0.0f))
@@ -96,6 +96,26 @@ void CPlayer::Update()
 		m_bullet[i].Update();
 	}
 
+	if (m_pos.x + m_scale.x <= 0.0f - m_scale.x)
+	{
+		m_pos.x = SCREEN_WIDTH;
+		SetPos(m_pos);
+	}
+	if (m_pos.x - m_scale.x >= SCREEN_WIDTH + m_scale.x)
+	{
+		m_pos.x = 0.0f;
+		SetPos(m_pos);
+	}
+	if (m_pos.y + m_scale.y <= 0.0f - m_scale.y)
+	{
+		m_pos.y = SCREEN_HEIGHT;
+		SetPos(m_pos);
+	}
+	if (m_pos.y - m_scale.y >= SCREEN_HEIGHT + m_scale.y)
+	{
+		m_pos.y = 0.0f;
+		SetPos(m_pos);
+	}
 }
 
 //--------------------------------------------------
@@ -121,7 +141,7 @@ void CPlayer::Draw()
 // ê›íË
 // Author : Yuda Kaito
 //--------------------------------------------------
-void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
+void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, TYPE type)
 {
 	m_type = type;	// éÌï 
 
@@ -132,10 +152,10 @@ void CPlayer::Set(D3DXVECTOR3& pos, D3DXVECTOR3& size, PALYERTYPE type)
 
 	switch (m_type)
 	{
-	case PALYERTYPE::WHITE:
+	case TYPE::PLAYER_01:
 		CObject2D::SetColor(D3DXCOLOR(1.0f,1.0f,1.0f,1.0f));
 		break;
-	case PALYERTYPE::BLACK:
+	case TYPE::PLAYER_02:
 		CObject2D::SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 		break;
 	default:

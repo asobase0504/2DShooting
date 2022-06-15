@@ -41,9 +41,9 @@ public:
 	~CMode();
 
 	virtual HRESULT Init() = 0;
-	virtual void Uninit();
-	virtual void Update();
-	virtual void Draw();
+	virtual void Uninit() = 0;
+	virtual void Update() = 0;
+	virtual void Draw() = 0;
 
 	void Set();
 	TYPE GetMode() { return mode; }
@@ -51,7 +51,6 @@ public:
 private:
 	TYPE mode = MODE_NONE;		// 現在のモード
 	TYPE modeNext = MODE_NONE;	// 次のモード
-	CGame* game;
 };
 
 #endif // !_MODE_H_

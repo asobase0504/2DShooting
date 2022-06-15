@@ -49,12 +49,6 @@ void CObject2D::Uninit()
 		m_pVtxBuff->Release();
 		m_pVtxBuff = NULL;
 	}
-
-	if (m_pTexture != NULL)
-	{// テクスチャの解放
-		m_pTexture->Release();
-		m_pTexture = NULL;
-	}
 }
 
 //-----------------------------------------
@@ -71,7 +65,7 @@ void CObject2D::Update()
 void CObject2D::Draw()
 {
 	if (!m_isDraw)
-	{// 使用していない、描画するしない
+	{// 描画しない
 		return;
 	}
 

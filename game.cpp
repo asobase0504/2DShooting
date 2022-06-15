@@ -100,9 +100,10 @@ HRESULT  CGame::Init()
 	}
 
 	// ƒvƒŒƒCƒ„[‚Ì¶¬
-	player[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::WHITE);
-	player[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::PALYERTYPE::BLACK);
+	player[0]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::TYPE::PLAYER_01);
+	player[1]->Set(D3DXVECTOR3(SCREEN_WIDTH * 0.25f, SCREEN_HEIGHT * 0.5f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 0.0f), CPlayer::TYPE::PLAYER_02);
 
+	// ƒ}ƒbƒv‚Ì¶¬
 	InitMap();
 	LoadMap();
 	SetMap();
@@ -152,15 +153,16 @@ void CGame::Update()
 	player[0]->Update();
 	player[1]->Update();
 
-	for (int i = 0; i < CBullet::MAX_BULLET; i++)
-	{
-		if (player[0]->GetBullet() == nullptr || !player[0]->GetBullet()[i].GetDrawStatus())
-		{
-			continue;
-		}
+	// ’e“¯Žm‚Ì“–‚½‚è”»’è
+	//for (int i = 0; i < CBullet::MAX_BULLET; i++)
+	//{
+	//	if (player[0]->GetBullet() == nullptr || !player[0]->GetBullet()[i].GetDrawStatus())
+	//	{
+	//		continue;
+	//	}
 
-		player[0]->GetBullet()[i].HitWithBullet(player[1]->GetBullet());
-	}
+	//	player[0]->GetBullet()[i].HitWithBullet(player[1]->GetBullet());
+	//}
 
 	UpdateMap();
 }
@@ -171,16 +173,16 @@ void CGame::Update()
 void CGame::Draw()
 {
 	// ”wŒi‚Ì•`‰æ
-	//if (object != nullptr)
-	//{
-	//	object->Draw();
-	//}
+	if (object != nullptr)
+	{
+		object->Draw();
+	}
 
-	//DrawMap();
+	DrawMap();
 
 	// ƒvƒŒƒCƒ„\‚Ì•`‰æ
-	//player[0]->Draw();
-	//player[1]->Draw();
+	player[0]->Draw();
+	player[1]->Draw();
 }
 
 //--------------------------------------------------

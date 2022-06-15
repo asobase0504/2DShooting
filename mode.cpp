@@ -33,75 +33,6 @@ CMode::~CMode()
 {
 }
 
-void CMode::Uninit()
-{
-	UninitTutorial();	// チュートリアル
-
-	// ゲーム
-	if (game != nullptr)
-	{
-		game->Uninit();
-		delete game;
-		game = nullptr;
-	}
-
-	// リザルト
-	UninitResult();
-
-	// テクスチャ
-	UnloadTextureAll();
-}
-
-void CMode::Update()
-{
-	switch (mode)
-	{// どのモード？
-	case MODE_TITLE:	// タイトル
-		break;
-	case MODE_TUTORIAL:	// チュートリアル
-		UpdateTutorial();
-		break;
-	case MODE_GAME:		// ゲーム
-		game->Update();
-		break;
-	case MODE_RESULT:	// リザルト
-		UpdateResult();
-		break;
-	case MODE_NONE:
-		/* 処理なし */
-		break;
-	default:
-		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-		assert(false);
-		break;
-	}
-}
-
-void CMode::Draw()
-{
-	switch (mode)
-	{// どのモード？
-	case MODE_TITLE:	// タイトル
-		break;
-	case MODE_TUTORIAL:	// チュートリアル
-		DrawTutorial();
-		break;
-	case MODE_GAME:		// ゲーム
-		game->Draw();
-		break;
-	case MODE_RESULT:	// リザルト
-		DrawResult();
-		break;
-	case MODE_NONE:
-		/* 処理なし */
-		break;
-	default:
-		MessageBox(NULL, TEXT("想定外の列挙型を検出。"), TEXT("swith文の条件式"), MB_ICONHAND);
-		assert(false);
-		break;
-	}
-}
-
 void CMode::Set()
 {
 	if (modeNext == MODE_NONE)
@@ -129,7 +60,7 @@ void CMode::Set()
 		break;
 
 	case MODE_GAME:		// ゲーム
-		game->Uninit();
+		//game->Uninit();
 		break;
 
 	case MODE_RESULT:	// リザルト
